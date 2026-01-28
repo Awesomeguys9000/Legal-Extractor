@@ -1,0 +1,5 @@
+streamlit
+streamlit-pdf-viewer
+pypdf
+pdfminer.six
+google-genai

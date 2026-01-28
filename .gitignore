@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+
+# Node.js
+node_modules/
+node-v*/
+
+# Electron
+electron/
+
+# Temporary files
+temp_pdfs/
+*.pdf
+!examples/*.pdf
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# API Keys (never commit!)
+.env
+*.key
+
+# Package locks
+package-lock.json

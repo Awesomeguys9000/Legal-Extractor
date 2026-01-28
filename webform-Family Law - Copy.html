@@ -1,0 +1,2788 @@
+<!-- To be moved to the HEAD of HTML document -->
+<link type="text/css" rel="stylesheet" href="https://cdn.actionstep.com/assets/DatetimeControl.css" media="screen">
+<script type="text/javascript" src="https://cdn.actionstep.com/assets/Locale.js"></script>
+<script type="text/javascript" src="https://cdn.actionstep.com/assets/DatetimeControl.js"></script>
+<script type="text/javascript" src="https://cdn.actionstep.com/assets/phpDateUtilities.js"></script>
+<script type="text/javascript">
+    //<!--   comment
+    if (typeof (ActionStep_Locale) !== 'undefined') {
+        ActionStep_Locale.setDateFormats('%d/%m/%Y', '%d %b %Y', '%A %e %B, %Y'); //%d/%m/%Y', '%d %b %Y', '%A %e %B, %Y');
+        ActionStep_Locale.setFirstDayOfTheWeek('Monday');
+    }
+
+
+    if (typeof (jQuery) != 'undefined') {
+        jQuery(window).ready(function () {
+            jQuery('.DateControl_CalIcon').attr("src", "https://cdn.actionstep.com/assets/ActionStep_DatetimeControl_Cal.png");
+        });
+    } else {
+        window.setTimeout(function () {
+            var calImages = document.getElementsByClassName("DateControl_CalIcon");
+            for (var i = 0; i < calImages.length; i++) {
+                calImages[i].src = "https://cdn.actionstep.com/assets/ActionStep_DatetimeControl_Cal.png";
+            }
+        }, 500);
+    }
+
+    ActionStep_DatetimeControl.CONFIG.dateFormat = 'DDMMYYYY';
+
+    //-->
+</script>
+
+<script type="text/javascript">
+    window.onload = function () {
+        const currentUrl = window.location.href;
+        if (currentUrl.indexOf("action_id") !== -1) {
+            const actionId = currentUrl.split("action_id=")[1];
+            const actionIdElement = document.getElementById("action_id");
+            actionIdElement.value = actionId;
+        }
+    }
+</script>
+
+<style>
+    /* --- Global Dark Theme Settings --- */
+
+    body * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        -o-box-sizing: border-box;
+    }
+
+    .AdvancedForm {
+        margin: 0;
+        padding: 0;
+        font-family: inherit;
+        line-height: 1.4;
+        font-size: 1em;
+        color: #fff;
+    }
+
+    /* Ensure headings match the theme */
+    .AdvancedForm h2,
+    .AdvancedForm h3,
+    .AdvancedForm h4 {
+        color: #fff;
+        border-bottom: 1px solid #6abf4b;
+        padding-bottom: 10px;
+        margin-top: 30px;
+    }
+
+    .AdvancedForm .FormField {
+        margin: 0 0 1.5em 0;
+        width: auto !important;
+        font-size: inherit;
+    }
+
+    .AdvancedForm label {
+        display: block;
+        font-weight: bold;
+        margin: 0 0 3px 0;
+        font-size: inherit;
+        color: #fff;
+    }
+
+    .AdvancedForm .label-2 {
+        display: block;
+        margin: 0 0 3px 0;
+        font-size: inherit;
+        font-weight: 500;
+        color: #fff;
+    }
+
+    .AdvancedForm p {
+        margin: 2em 0;
+        font-size: inherit;
+        color: #fff;
+    }
+
+    .AdvancedForm p.hint {
+        margin: 1px 0 0 0;
+        font-style: italic;
+        color: #ccc;
+        font-size: 0.9em;
+    }
+
+    /* --- Input Styling --- */
+
+    .AdvancedForm input,
+    .AdvancedForm textarea,
+    .AdvancedForm select {
+        padding: 16px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: none;
+        font-size: 14px;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .AdvancedForm input[type="text"],
+    .AdvancedForm input[type="email"],
+    .AdvancedForm input[type="number"],
+    .AdvancedForm textarea,
+    .AdvancedForm select {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+    }
+
+    /* Reset Checkboxes to be small and inline */
+    .AdvancedForm input[type="checkbox"],
+    .AdvancedForm input[type="radio"] {
+        width: auto !important;
+        display: inline-block;
+        margin-right: 10px;
+        padding: 0;
+        height: auto;
+        vertical-align: middle;
+    }
+
+    /* Multi-select dropdown styling */
+    .AdvancedForm .multi-select {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .AdvancedForm .multi-select select {
+        display: none;
+    }
+
+    .AdvancedForm .multi-select .selectBox {
+        border: 1px solid #6abf4b;
+        padding: 16px;
+        background: #fff;
+        cursor: pointer;
+        position: relative;
+        border-radius: 5px;
+        color: #000;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+    }
+
+    .AdvancedForm .multi-select .selectBox:after {
+        content: "";
+        position: absolute;
+        right: 1em;
+        top: 50%;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 8px solid #6abf4b;
+        transform: translateY(-50%);
+    }
+
+    .AdvancedForm .multi-select .checkboxes {
+        display: none;
+        border: 1px solid #6abf4b;
+        border-top: none;
+        background: #fff;
+        padding: 10px;
+        position: absolute;
+        width: 100%;
+        z-index: 1000;
+        max-height: 200px;
+        overflow: auto;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .AdvancedForm .multi-select .checkboxes label {
+        display: block;
+        font-weight: normal;
+        margin: 8px 0;
+        color: #000;
+        cursor: pointer;
+    }
+
+    .AdvancedForm .multi-select .checkboxes input {
+        margin-right: 8px;
+    }
+
+    /* Date controls fix */
+    .AdvancedForm input.DateControl_DateInputBox,
+    .AdvancedForm input.TimeControl_TimeInputBox {
+        width: 150px !important;
+        display: inline-block;
+    }
+
+    .AdvancedForm .DateControl_MemoInputBox {
+        width: 10em;
+        border-color: #ccc;
+        border-style: dotted;
+        border-width: 0 0 1px 0;
+        color: #555;
+        font-style: italic;
+    }
+
+    /* Submit Button Styling */
+    .AdvancedForm input[type="submit"],
+    .AdvancedForm button.Submit {
+        color: #ffffff !important;
+        border-radius: 5px;
+        letter-spacing: 2px;
+        font-size: 16px;
+        text-transform: uppercase !important;
+        background-color: #6abf4b;
+        padding: 14px 60px;
+        font-weight: bold;
+        cursor: pointer;
+        border: 2px solid #6abf4b;
+        margin-top: 20px;
+    }
+
+    /* Required Asterisk */
+    .gp-style.AdvancedForm label.required:after,
+    .AdvancedForm label.required:after {
+        content: "*";
+        color: rgb(255 0 0);
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 3px;
+        font-size: 0.9em;
+    }
+
+    .gp-style.AdvancedForm>p:not(.hint) {
+        padding: 0;
+        margin: 5px 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    /* --- Toggle/Hidden Field Styling --- */
+    .hidden-field {
+        display: none;
+    }
+
+    /* --- Toggle Box Styling --- */
+    form.AdvancedForm .toggle-content {
+        display: block;
+        margin-top: 10px;
+        padding: 15px;
+        background-color: #00333A !important;
+        border: 1px solid #444 !important;
+        border-radius: 4px;
+        text-align: left;
+        color: #ffffff !important;
+    }
+
+    form.AdvancedForm .toggle-content p,
+    form.AdvancedForm .toggle-content ul,
+    form.AdvancedForm .toggle-content li,
+    form.AdvancedForm .toggle-content div,
+    form.AdvancedForm .toggle-content label {
+        color: #ffffff !important;
+    }
+
+    form.AdvancedForm .toggle-content h4,
+    form.AdvancedForm .toggle-content h3 {
+        color: #ffffff !important;
+        border-bottom: 1px solid #6abf4b !important;
+        padding-bottom: 10px;
+        margin-top: 30px;
+    }
+
+    .as-element-checkbox {
+        margin-bottom: 10px;
+    }
+
+    /* Button styling */
+    .AdvancedForm button {
+        color: #ffffff !important;
+        border-radius: 5px;
+        letter-spacing: 1px;
+        font-size: 14px;
+        background-color: #6abf4b;
+        padding: 10px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        border: 2px solid #6abf4b;
+        margin: 5px 5px 5px 0;
+    }
+
+    /* --- Control Button Groups (Add/Remove buttons) --- */
+    .FormField.ChildControls,
+    .FormField.RealEstateControls,
+    .FormField.VehicleControls,
+    .FormField.BankControls,
+    .FormField.ShareControls,
+    .FormField.InterestControls,
+    .FormField.LiabilityControls,
+    .FormField.SuperControls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .FormField.ChildControls button,
+    .FormField.RealEstateControls button,
+    .FormField.VehicleControls button,
+    .FormField.BankControls button,
+    .FormField.ShareControls button,
+    .FormField.InterestControls button,
+    .FormField.LiabilityControls button,
+    .FormField.SuperControls button {
+        width: 100%;
+        margin: 0;
+    }
+
+    /* --- Checkbox Form Field Alignment Fix --- */
+    .AdvancedForm .FormField .as-element-checkbox {
+        display: block;
+        margin: 8px 0;
+    }
+
+    .AdvancedForm .FormField .as-element-checkbox input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    /* Force hint text below checkbox, not to the right */
+    .AdvancedForm .FormField .as-element-checkbox~p.hint,
+    .AdvancedForm .FormField .as-element-checkbox+p.hint {
+        display: block;
+        clear: both;
+        margin-top: 5px;
+        text-align: left;
+    }
+
+    /* Checkbox fields - full width stacking */
+    .FormField.Dc1594Clienthealthissues,
+    .FormField.Dc1594Clienthaswill,
+    .FormField.Dc1594ClientgivenpowerofAttorney,
+    .FormField.Dc1594Clientwishtomakenewwill,
+    .FormField.Dc1594Clientwishtomakepowerofattorneydocument,
+    .FormField.Dc1594Clientwishtoseverjointtenancy {
+        display: block;
+        width: 100%;
+        clear: both;
+    }
+
+    .FormField.Dc1594Clienthealthissues>label,
+    .FormField.Dc1594Clienthaswill>label,
+    .FormField.Dc1594ClientgivenpowerofAttorney>label,
+    .FormField.Dc1594Clientwishtomakenewwill>label,
+    .FormField.Dc1594Clientwishtomakepowerofattorneydocument>label,
+    .FormField.Dc1594Clientwishtoseverjointtenancy>label {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    /* --- Calendar Icon Fix --- */
+    .DateControl_CalIcon {
+        display: none !important;
+    }
+
+    /* Add modern calendar icon using CSS */
+    .AdvancedForm input.DateControl_DateInputBox,
+    .AdvancedForm input[class*="dateControl"] {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 20px 20px;
+        padding-right: 40px !important;
+        cursor: pointer;
+    }
+
+    /* --- Date Picker Popup Fix --- */
+    .DateControl_Popup,
+    .DateControl_CalendarPopup,
+    div[class*="DateControl"] {
+        z-index: 9999 !important;
+        position: absolute !important;
+    }
+
+    /* Style the calendar popup container */
+    .DateControl_Popup {
+        background: #fff !important;
+        border: 1px solid #ccc !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+        padding: 10px !important;
+    }
+
+    /* Navigation row - arrows and TODAY on same line */
+    .DateControl_Popup .DateControl_NavRow,
+    .DateControl_NavRow {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 5px 0 !important;
+    }
+
+    .DateControl_Popup a,
+    .DateControl_NavRow a {
+        display: inline-block !important;
+        padding: 5px 10px !important;
+        text-decoration: none !important;
+        color: #006064 !important;
+        font-weight: bold !important;
+    }
+
+    .DateControl_Popup a:hover {
+        background-color: #e0f7fa !important;
+        border-radius: 4px !important;
+    }
+
+    /* --- Mobile Responsive Design --- */
+    @media screen and (max-width: 768px) {
+        .AdvancedForm {
+            padding: 10px;
+        }
+
+        .AdvancedForm .FormField {
+            margin-bottom: 1em;
+        }
+
+        .AdvancedForm input[type="text"],
+        .AdvancedForm input[type="email"],
+        .AdvancedForm input[type="number"],
+        .AdvancedForm textarea,
+        .AdvancedForm select {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        /* Stack buttons vertically on mobile */
+        .FormField.ChildControls,
+        .FormField.RealEstateControls,
+        .FormField.VehicleControls,
+        .FormField.BankControls,
+        .FormField.ShareControls,
+        .FormField.InterestControls,
+        .FormField.LiabilityControls,
+        .FormField.SuperControls {
+            grid-template-columns: 1fr;
+        }
+
+        .AdvancedForm button {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 13px;
+        }
+
+        .AdvancedForm input[type="submit"],
+        .AdvancedForm button.Submit {
+            width: 100%;
+            padding: 16px 30px;
+        }
+
+        .AdvancedForm label {
+            font-size: 14px;
+        }
+
+        .AdvancedForm p.hint {
+            font-size: 12px;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+
+        .AdvancedForm input[type="text"],
+        .AdvancedForm input[type="email"],
+        .AdvancedForm input[type="number"],
+        .AdvancedForm textarea,
+        .AdvancedForm select {
+            padding: 10px;
+        }
+
+        .AdvancedForm button {
+            font-size: 12px;
+            padding: 10px 12px;
+            letter-spacing: 0.5px;
+        }
+    }
+</style>
+
+<!-- End of HEAD -->
+<div>
+    <form id="ActionStepWebform793" name="ActionStepWebform793" enctype="application/x-www-form-urlencoded"
+        class="AdvancedForm Webform1" method="post"
+        action="https://go.actionstep.com/frontend/application/webform/post">
+
+        <input type="hidden" name="organization_key" value="greenhalgh" class="OrganizationKey" id="organization_key">
+
+        <input type="hidden" name="uid" value="7cac2a3ae509fdf2b0961dea7b444bae088a60b8" class="Uid" id="uid">
+
+        <input type="hidden" name="action_id" value="" class="ActionId" id="action_id">
+        <div class="FormField P27FirstName"><label for="p27__first_name" class="required js-label">Your First
+                Name</label>
+
+            <input type="text" name="p27__first_name" id="p27__first_name" value="" class="P27FirstName"
+                required="required">
+            <p class="hint">Your First Name</p>
+        </div>
+        <div class="FormField P139MiddleName"><label for="p139__middle_name" class="optional js-label">Your Middle
+                Name</label>
+
+            <input type="text" name="p139__middle_name" id="p139__middle_name" value="" class="P139MiddleName">
+            <p class="hint">Your Middle Name</p>
+        </div>
+        <div class="FormField P27LastName"><label for="p27__last_name" class="required js-label">Your Last Name</label>
+
+            <input type="text" name="p27__last_name" id="p27__last_name" value="" class="P27LastName"
+                required="required">
+            <p class="hint">Your Last Name</p>
+        </div>
+        <div class="FormField Dc1594Clientpvsnames"><label for="dc1594__Clientpvsnames"
+                class="optional js-label">Previous/other name/s</label>
+
+            <input type="text" name="dc1594__Clientpvsnames" id="dc1594__Clientpvsnames" value=""
+                class="Dc1594Clientpvs-names">
+            <p class="hint">Previous/other name/s</p>
+        </div>
+        <div class="FormField P27AddressLine1"><label for="p27__address_line_1" class="required js-label">Current
+                Address (Line 1)</label>
+
+            <input type="text" name="p27__address_line_1" id="p27__address_line_1" value="" class="P27AddressLine1"
+                required="required">
+            <p class="hint">Current Address (Line 1)</p>
+        </div>
+        <div class="FormField P27City"><label for="p27__city" class="required js-label">Current Address (Suburb)</label>
+
+            <input type="text" name="p27__city" id="p27__city" value="" class="P27City" required="required">
+            <p class="hint">Current Address (Suburb)</p>
+        </div>
+        <div class="FormField P27StateProvince"><label for="p27__state_province" class="required js-label">Current
+                Address (State)</label>
+
+            <input type="text" name="p27__state_province" id="p27__state_province" value="" class="P27StateProvince"
+                required="required">
+            <p class="hint">Current Address (State)</p>
+        </div>
+        <div class="FormField P27PostCode"><label for="p27__post_code" class="required js-label">Current Address (Post
+                Code)</label>
+
+            <input type="text" name="p27__post_code" id="p27__post_code" value="" class="P27PostCode"
+                required="required">
+            <p class="hint">Current Address (Post Code)</p>
+        </div>
+        <div class="FormField P27DateOfBirth"><label for="p27__date_of_birth" class="required js-label">Date of
+                Birth</label>
+
+            <input type="text" name="p27__date_of_birth" id="p27__date_of_birth" value=""
+                class="P27DateOfBirthdateControl" required="required">
+            <p class="hint">Date of Birth</p>
+        </div>
+        <div class="FormField P27Phone1"><label for="p27__phone1" class="optional js-label">Secure and confidential
+                mobile number</label>
+
+            <input type="text" name="p27__phone1" id="p27__phone1" value="" class="P27Phone1">
+            <p class="hint">Secure and confidential mobile number</p>
+        </div>
+        <div class="FormField P27EMail"><label for="p27__e_mail" class="optional js-label">Secure and confidential
+                email</label>
+
+            <input type="text" name="p27__e_mail" id="p27__e_mail" value="" class="P27EMail">
+            <p class="hint">Secure and confidential email</p>
+        </div>
+        <div class="FormField P126FirstName"><label for="p126__first_name" class="optional js-label">Former Partner
+                First Name</label>
+
+            <input type="text" name="p126__first_name" id="p126__first_name" value="" class="P126FirstName">
+            <p class="hint">Former Partner First Name</p>
+        </div>
+        <div class="FormField P126MiddleName"><label for="p126__middle_name" class="optional js-label">Former Partner
+                Middle Name</label>
+
+            <input type="text" name="p126__middle_name" id="p126__middle_name" value="" class="P126MiddleName">
+            <p class="hint">Former Partner Middle Name</p>
+        </div>
+        <div class="FormField P126LastName"><label for="p126__last_name" class="optional js-label">Former Partner Last
+                Name</label>
+
+            <input type="text" name="p126__last_name" id="p126__last_name" value="" class="P126LastName">
+            <p class="hint">Former Partner Last Name</p>
+        </div>
+        <div class="FormField P126AddressLine1"><label for="p126__address_line_1" class="optional js-label">Former
+                Partner Current Address (Street)</label>
+
+            <input type="text" name="p126__address_line_1" id="p126__address_line_1" value="" class="P126AddressLine1">
+            <p class="hint">Former Partner Current Address (Street)</p>
+        </div>
+        <div class="FormField P126City"><label for="p126__city" class="optional js-label">Former Partner Current Address
+                (Suburb)</label>
+
+            <input type="text" name="p126__city" id="p126__city" value="" class="P126City">
+            <p class="hint">Former Partner Current Address (Suburb)</p>
+        </div>
+        <div class="FormField P126StateProvince"><label for="p126__state_province" class="optional js-label">Former
+                Partner Current Address (State)</label>
+
+            <input type="text" name="p126__state_province" id="p126__state_province" value="" class="P126StateProvince">
+            <p class="hint">Former Partner Current Address (State)</p>
+        </div>
+        <div class="FormField P126PostCode"><label for="p126__post_code" class="optional js-label">Former Partner
+                Current Address (Post code)</label>
+
+            <input type="text" name="p126__post_code" id="p126__post_code" value="" class="P126PostCode">
+            <p class="hint">Former Partner Current Address (Post code)</p>
+        </div>
+        <div class="FormField Dc1594PersonalDetailsofFormerPartner"><label for="dc1594__PersonalDetailsofFormerPartner"
+                class="optional js-label">Former Partner Previous/other name/s</label>
+
+            <input type="text" name="dc1594__PersonalDetailsofFormerPartner" id="dc1594__PersonalDetailsofFormerPartner"
+                value="" class="Dc1594PersonalDetailsofFormerPartner">
+            <p class="hint">Former Partner Previous/other name/s</p>
+        </div>
+        <div class="FormField P126DateOfBirth"><label for="p126__date_of_birth" class="optional js-label">Former Partner
+                Date of Birth</label>
+
+            <input type="text" name="p126__date_of_birth" id="p126__date_of_birth" value=""
+                class="P126DateOfBirthdateControl">
+            <p class="hint">Former Partner Date of Birth</p>
+        </div>
+        <div class="FormField P126Phone1"><label for="p126__phone1" class="optional js-label">Former Partner Contact
+                Number</label>
+
+            <input type="text" name="p126__phone1" id="p126__phone1" value="" class="P126Phone1">
+            <p class="hint">Former Partner Contact Number</p>
+        </div>
+        <div class="FormField P126EMail"><label for="p126__e_mail" class="optional js-label">Former Partner Contact
+                Email</label>
+
+            <input type="text" name="p126__e_mail" id="p126__e_mail" value="" class="P126EMail">
+            <p class="hint">Former Partner Contact Email</p>
+        </div>
+        <div class="FormField Dc15941stChildfullname"><label for="dc1594__1stChildfullname"
+                class="optional js-label">First Child's First Name</label>
+
+            <input type="text" name="dc1594__1stChildfullname" id="dc1594__1stChildfullname" value=""
+                class="Dc15941st-Child-full-name">
+            <p class="hint">First Child's First Name</p>
+        </div>
+        <div class="FormField Dc15941stchildgenderdropdown"><label for="dc1594__1stchildgenderdropdown"
+                class="optional js-label">First Child's Gender</label>
+
+            <select name="dc1594__1stchildgenderdropdown" id="dc1594__1stchildgenderdropdown"
+                class="Dc15941st-child-gender-dropdown">
+                <option value="Female" label="Female">Female</option>
+                <option value="Male" label="Male">Male</option>
+                <option value="Other" label="Other">Other</option>
+            </select>
+            <p class="hint">First Child's Gender</p>
+        </div>
+        <div class="FormField Dc15941stgendertextbox"><label for="dc1594__1stgendertextbox"
+                class="optional js-label">First Child's Gender (Specify)</label>
+
+            <input type="text" name="dc1594__1stgendertextbox" id="dc1594__1stgendertextbox" value=""
+                class="Dc15941st-gender-textbox">
+            <p class="hint">First Child's Gender (Specify)</p>
+        </div>
+        <div class="FormField Dc15941stchilddob"><label for="dc1594__1stchilddob" class="optional js-label">First
+                Child's Date of Birth</label>
+
+            <input type="text" name="dc1594__1stchilddob" id="dc1594__1stchilddob" value=""
+                class="Dc15941st-child-dobdateControl">
+            <p class="hint">First Child's Date of Birth</p>
+        </div>
+        <div class="FormField Dc15941stchildlvngarrangements"><label for="dc1594__1stchildlvngarrangements"
+                class="optional js-label">First Child's Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__1stchildlvngarrangements" id="dc1594__1stchildlvngarrangements" value=""
+                class="Dc15941st-child-lvng-arrangements">
+            <p class="hint">First Child's Address/Current Living Arrangements</p>
+        </div>
+        <div class="FormField Dc15942ndChildfullname"><label for="dc1594__2ndChildfullname"
+                class="optional js-label">Second Child's First Name</label>
+
+            <input type="text" name="dc1594__2ndChildfullname" id="dc1594__2ndChildfullname" value=""
+                class="Dc15942nd-Child-full-name">
+            <p class="hint">Second Child's First Name</p>
+        </div>
+        <div class="FormField Dc15942ndchildgenderdropdown"><label for="dc1594__2ndchildgenderdropdown"
+                class="optional js-label">Second Child's Gender</label>
+
+            <select name="dc1594__2ndchildgenderdropdown" id="dc1594__2ndchildgenderdropdown"
+                class="Dc15942nd-child-gender-dropdown">
+                <option value="Female" label="Female">Female</option>
+                <option value="Male" label="Male">Male</option>
+                <option value="Other" label="Other">Other</option>
+            </select>
+            <p class="hint">Second Child's Gender</p>
+        </div>
+        <div class="FormField Dc15942ndgendertextbox"><label for="dc1594__2ndgendertextbox"
+                class="optional js-label">Second Child's Gender (Specify)</label>
+
+            <input type="text" name="dc1594__2ndgendertextbox" id="dc1594__2ndgendertextbox" value=""
+                class="Dc15942nd-gender-textbox">
+            <p class="hint">Second Child's Gender (Specify)</p>
+        </div>
+        <div class="FormField Dc15942ndchilddob"><label for="dc1594__2ndchilddob" class="optional js-label">Second
+                Child's Date of Birth</label>
+
+            <input type="text" name="dc1594__2ndchilddob" id="dc1594__2ndchilddob" value=""
+                class="Dc15942nd-child-dobdateControl">
+            <p class="hint">Second Child's Date of Birth</p>
+        </div>
+        <div class="FormField Dc15942ndchildlvngarrangements"><label for="dc1594__2ndchildlvngarrangements"
+                class="optional js-label">Second Child's Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__2ndchildlvngarrangements" id="dc1594__2ndchildlvngarrangements" value=""
+                class="Dc15942nd-child-lvng-arrangements">
+            <p class="hint">Second Child's Address/Current Living Arrangements</p>
+        </div>
+        <div class="FormField Dc15943rdChildfullname"><label for="dc1594__3rdChildfullname"
+                class="optional js-label">Third Child's Full Name</label>
+
+            <input type="text" name="dc1594__3rdChildfullname" id="dc1594__3rdChildfullname" value=""
+                class="Dc15943rd-Child-full-name">
+            <p class="hint">Third Child's Full Name</p>
+        </div>
+        <div class="FormField Dc15943rdchildgenderdropdown"><label for="dc1594__3rdchildgenderdropdown"
+                class="optional js-label">Third Child's Gender</label>
+
+            <select name="dc1594__3rdchildgenderdropdown" id="dc1594__3rdchildgenderdropdown"
+                class="Dc15943rd-child-gender-dropdown">
+                <option value="Female" label="Female">Female</option>
+                <option value="Male" label="Male">Male</option>
+                <option value="Other" label="Other">Other</option>
+            </select>
+            <p class="hint">Third Child's Gender</p>
+        </div>
+        <div class="FormField Dc15943rdgendertextbox"><label for="dc1594__3rdgendertextbox"
+                class="optional js-label">Third Child's Gender (Specify)</label>
+
+            <input type="text" name="dc1594__3rdgendertextbox" id="dc1594__3rdgendertextbox" value=""
+                class="Dc15943rd-gender-textbox">
+            <p class="hint">Third Child's Gender (Specify)</p>
+        </div>
+        <div class="FormField Dc15943rdchilddob"><label for="dc1594__3rdchilddob" class="optional js-label">Third
+                Child's Date of Birth</label>
+
+            <input type="text" name="dc1594__3rdchilddob" id="dc1594__3rdchilddob" value=""
+                class="Dc15943rd-child-dobdateControl">
+            <p class="hint">Third Child's Date of Birth</p>
+        </div>
+        <div class="FormField Dc15943rdchildlvngarrangements"><label for="dc1594__3rdchildlvngarrangements"
+                class="optional js-label">Third Child's Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__3rdchildlvngarrangements" id="dc1594__3rdchildlvngarrangements" value=""
+                class="Dc15943rd-child-lvng-arrangements">
+            <p class="hint">Third Child's Address/Current Living Arrangements</p>
+        </div>
+        <div class="FormField Dc15944thChildfullname"><label for="dc1594__4thChildfullname"
+                class="optional js-label">Fourth Child's Full Name</label>
+
+            <input type="text" name="dc1594__4thChildfullname" id="dc1594__4thChildfullname" value=""
+                class="Dc15944th-Child-full-name">
+            <p class="hint">Fourth Child's Full Name</p>
+        </div>
+        <div class="FormField Dc15944thchildgenderdropdown"><label for="dc1594__4thchildgenderdropdown"
+                class="optional js-label">Fourth Child's Gender</label>
+
+            <select name="dc1594__4thchildgenderdropdown" id="dc1594__4thchildgenderdropdown"
+                class="Dc15944th-child-gender-dropdown">
+                <option value="Female" label="Female">Female</option>
+                <option value="Male" label="Male">Male</option>
+                <option value="Other" label="Other">Other</option>
+            </select>
+            <p class="hint">Fourth Child's Gender</p>
+        </div>
+        <div class="FormField Dc15944thgendertextbox"><label for="dc1594__4thgendertextbox"
+                class="optional js-label">Fourth Child's Gender (Specify)</label>
+
+            <input type="text" name="dc1594__4thgendertextbox" id="dc1594__4thgendertextbox" value=""
+                class="Dc15944th-gender-textbox">
+            <p class="hint">Fourth Child's Gender (Specify)</p>
+        </div>
+        <div class="FormField Dc15944thchilddob"><label for="dc1594__4thchilddob" class="optional js-label">Fourth
+                Child's Date of Birth</label>
+
+            <input type="text" name="dc1594__4thchilddob" id="dc1594__4thchilddob" value=""
+                class="Dc15944th-child-dobdateControl">
+            <p class="hint">Fourth Child's Date of Birth</p>
+        </div>
+        <div class="FormField Dc15944thchildlvngarrangements"><label for="dc1594__4thchildlvngarrangements"
+                class="optional js-label">Fourth Child's Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__4thchildlvngarrangements" id="dc1594__4thchildlvngarrangements" value=""
+                class="Dc15944th-child-lvng-arrangements">
+            <p class="hint">Fourth Child's Address/Current Living Arrangements</p>
+        </div>
+        <div class="FormField Dc15945thChildfullname"><label for="dc1594__5thChildfullname"
+                class="optional js-label">Fifth Child's Full Name</label>
+
+            <input type="text" name="dc1594__5thChildfullname" id="dc1594__5thChildfullname" value=""
+                class="Dc15945th-Child-full-name">
+            <p class="hint">Fifth Child's Full Name</p>
+        </div>
+        <div class="FormField Dc15945thchildgenderdropdown"><label for="dc1594__5thchildgenderdropdown"
+                class="optional js-label">Fifth Child's Gender</label>
+
+            <select name="dc1594__5thchildgenderdropdown" id="dc1594__5thchildgenderdropdown"
+                class="Dc15945th-child-gender-dropdown">
+                <option value="Female" label="Female">Female</option>
+                <option value="Male" label="Male">Male</option>
+                <option value="Other" label="Other">Other</option>
+            </select>
+            <p class="hint">Fifth Child's Gender</p>
+        </div>
+        <div class="FormField Dc15945thgendertextbox"><label for="dc1594__5thgendertextbox"
+                class="optional js-label">Fifth Child's Gender (Specify)</label>
+
+            <input type="text" name="dc1594__5thgendertextbox" id="dc1594__5thgendertextbox" value=""
+                class="Dc15945th-gender-textbox">
+            <p class="hint">Fifth Child's Gender (Specify)</p>
+        </div>
+        <div class="FormField Dc15945thchilddob"><label for="dc1594__5thchilddob" class="optional js-label">Fifth
+                Child's Date of Birth</label>
+
+            <input type="text" name="dc1594__5thchilddob" id="dc1594__5thchilddob" value=""
+                class="Dc15945th-child-dobdateControl">
+            <p class="hint">Fifth Child's Date of Birth</p>
+        </div>
+        <div class="FormField Dc15945thchildlvngarrangements"><label for="dc1594__5thchildlvngarrangements"
+                class="optional js-label">Fifth Child's Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__5thchildlvngarrangements" id="dc1594__5thchildlvngarrangements" value=""
+                class="Dc15945th-child-lvng-arrangements">
+            <p class="hint">Fifth Child's Address/Current Living Arrangements</p>
+        </div>
+        <div class="FormField Dc1594AdditonalChildren"><label for="dc1594__AdditonalChildren"
+                class="optional js-label">Details of Any Additional Children Including Name, Gender, Date of Birth,
+                Address/Current Living Arrangements</label>
+
+            <input type="text" name="dc1594__AdditonalChildren" id="dc1594__AdditonalChildren" value=""
+                class="Dc1594AdditonalChildren">
+            <p class="hint">Details of Any Additional Children Including Name, Gender, Date of Birth, Address/Current
+                Living Arrangements</p>
+        </div>
+        <div class="FormField ChildControls">
+            <button type="button" class="ChildControlAdd">Add a Child</button>
+            <button type="button" class="ChildControlRemove">Remove a Child</button>
+        </div>
+        <div class="FormField Dc1594Dateof1stchoab"><label for="dc1594__dateof1stchoab" class="optional js-label">Date
+                of 1st Cohabitation</label>
+
+            <input type="text" name="dc1594__dateof1stchoab" id="dc1594__dateof1stchoab" value=""
+                class="Dc1594Dateof1stchoabdateControl">
+            <p class="hint">Date of 1st Cohabitation</p>
+        </div>
+        <div class="FormField Dc1594Dateofanymarriage"><label for="dc1594__dateofanymarriage"
+                class="optional js-label">Date of Any Marriage</label>
+
+            <input type="text" name="dc1594__dateofanymarriage" id="dc1594__dateofanymarriage" value=""
+                class="Dc1594DateofanymarriagedateControl">
+            <p class="hint">Date of Any Marriage</p>
+        </div>
+        <div class="FormField Dc1594Datefinalseperation"><label for="dc1594__datefinalseperation"
+                class="optional js-label">Date of Final Separation</label>
+
+            <input type="text" name="dc1594__datefinalseperation" id="dc1594__datefinalseperation" value=""
+                class="Dc1594DatefinalseperationdateControl">
+            <p class="hint">Date of Final Separation</p>
+        </div>
+        <div class="FormField Dc1594Datedivorce"><label for="dc1594__datedivorce" class="optional js-label">Date of Any
+                Divorce</label>
+
+            <input type="text" name="dc1594__datedivorce" id="dc1594__datedivorce" value=""
+                class="Dc1594DatedivorcedateControl">
+            <p class="hint">Date of Any Divorce</p>
+        </div>
+        <div class="FormField P27Occupation"><label for="p27__occupation" class="optional js-label">Your
+                Occupation</label>
+
+            <input type="text" name="p27__occupation" id="p27__occupation" value="" class="P27Occupation">
+            <p class="hint">Your Occupation</p>
+        </div>
+        <div class="FormField Dc1594Clientcurrentemployer"><label for="dc1594__clientcurrentemployer"
+                class="optional js-label">Current Employer</label>
+
+            <input type="text" name="dc1594__clientcurrentemployer" id="dc1594__clientcurrentemployer" value=""
+                class="Dc1594Clientcurrentemployer">
+            <p class="hint">Current Employer</p>
+        </div>
+        <div class="FormField Dc1594Clientcurrentemployeraddress"><label for="dc1594__clientcurrentemployeraddress"
+                class="optional js-label">Current Employer Address</label>
+
+            <input type="text" name="dc1594__clientcurrentemployeraddress" id="dc1594__clientcurrentemployeraddress"
+                value="" class="Dc1594Clientcurrentemployeraddress">
+            <p class="hint">Current Employer Address</p>
+        </div>
+        <div class="FormField Dc1594Clientemploymentduration"><label for="dc1594__clientemploymentduration"
+                class="optional js-label">Duration of Current Employment</label>
+
+            <input type="text" name="dc1594__clientemploymentduration" id="dc1594__clientemploymentduration" value=""
+                class="Dc1594Clientemploymentduration">
+            <p class="hint">Duration of Current Employment</p>
+        </div>
+        <div class="FormField Dc1594Formerpartneroccupation"><label for="dc1594__formerpartneroccupation"
+                class="optional js-label">What's Your Former Partner's Occupation</label>
+
+            <input type="text" name="dc1594__formerpartneroccupation" id="dc1594__formerpartneroccupation" value=""
+                class="Dc1594Formerpartneroccupation">
+            <p class="hint">What's Your Former Partner's Occupation</p>
+        </div>
+        <div class="FormField Dc1594Formerpartneremployer"><label for="dc1594__formerpartneremployer"
+                class="optional js-label">What's Your Former Partner's Current Employer</label>
+
+            <input type="text" name="dc1594__formerpartneremployer" id="dc1594__formerpartneremployer" value=""
+                class="Dc1594Formerpartneremployer">
+            <p class="hint">What's Your Former Partner's Current Employer</p>
+        </div>
+        <div class="FormField Dc1594Formerpartneraddress"><label for="dc1594__formerpartneraddress"
+                class="optional js-label">What's Your Former Partner's Current Employer Address</label>
+
+            <input type="text" name="dc1594__formerpartneraddress" id="dc1594__formerpartneraddress" value=""
+                class="Dc1594Formerpartneraddress">
+            <p class="hint">What's Your Former Partner's Current Employer Address</p>
+        </div>
+        <div class="FormField Dc1594Formerpartnerduration"><label for="dc1594__formerpartnerduration"
+                class="optional js-label">What's Your former partner's Duration of Current Employment?</label>
+
+            <input type="text" name="dc1594__formerpartnerduration" id="dc1594__formerpartnerduration" value=""
+                class="Dc1594Formerpartnerduration">
+            <p class="hint">What's Your former partner's Duration of Current Employment?</p>
+        </div>
+        <div class="FormField Dc1594Previoussolicoter"><label for="dc1594__previoussolicoter"
+                class="optional js-label">Previous Solicitor Used by You (If Applicable)</label>
+
+            <input type="text" name="dc1594__previoussolicoter" id="dc1594__previoussolicoter" value=""
+                class="Dc1594Previoussolicoter">
+            <p class="hint">Previous Solicitor Used by You (If Applicable)</p>
+        </div>
+        <div class="FormField Dc1594Previoussolicoteraddress"><label for="dc1594__previoussolicoteraddress"
+                class="optional js-label">Address of Previous Solicitor Used by You (If Applicable)</label>
+
+            <input type="text" name="dc1594__previoussolicoteraddress" id="dc1594__previoussolicoteraddress" value=""
+                class="Dc1594Previoussolicoteraddress">
+            <p class="hint">Address of Previous Solicitor Used by You (If Applicable)</p>
+        </div>
+        <div class="FormField Dc1594Formerpartnersolicitor"><label for="dc1594__formerpartnersolicitor"
+                class="optional js-label">Solicitor Used by Your Former Partner (If Known)</label>
+
+            <input type="text" name="dc1594__formerpartnersolicitor" id="dc1594__formerpartnersolicitor" value=""
+                class="Dc1594Formerpartnersolicitor">
+            <p class="hint">Solicitor Used by Your Former Partner (If Known)</p>
+        </div>
+        <div class="FormField Dc1594Formerpartnersoladdress"><label for="dc1594__formerpartnersoladdress"
+                class="optional js-label">Address of Solicitor Used by Your Former Partner (If Known)</label>
+
+            <input type="text" name="dc1594__formerpartnersoladdress" id="dc1594__formerpartnersoladdress" value=""
+                class="Dc1594Formerpartnersoladdress">
+            <p class="hint">Address of Solicitor Used by Your Former Partner (If Known)</p>
+        </div>
+        <div class="FormField Dc1594RE1desc"><label for="dc1594__RE1desc" class="optional js-label">First Real Estate
+                Asset description</label>
+
+            <input type="text" name="dc1594__RE1desc" id="dc1594__RE1desc" value="" class="Dc1594RE1-desc">
+            <p class="hint">First Real Estate Asset description</p>
+        </div>
+        <div class="FormField Dc1594Re1value"><label for="dc1594__Re1value" class="optional js-label">First Real Estate
+                Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Re1value" id="dc1594__Re1value" value="" class="Dc1594Re1-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Real Estate Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Re1owner"><label for="dc1594__Re1owner" class="optional js-label">First Real Estate
+                Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Re1owner" id="dc1594__Re1owner" value="" class="Dc1594Re1-owner">
+            <p class="hint">First Real Estate Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Re1financialdetails"><label for="dc1594__Re1financialdetails"
+                class="optional js-label">First Real Estate Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Re1financialdetails" id="dc1594__Re1financialdetails" value=""
+                class="Dc1594Re1-financial-details">
+            <p class="hint">First Real Estate Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Re2desc"><label for="dc1594__Re2desc" class="optional js-label">Second Real Estate
+                Asset Description</label>
+
+            <input type="text" name="dc1594__Re2desc" id="dc1594__Re2desc" value="" class="Dc1594Re2-desc">
+            <p class="hint">Second Real Estate Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Re2value"><label for="dc1594__Re2value" class="optional js-label">Second Real Estate
+                Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Re2value" id="dc1594__Re2value" value="" class="Dc1594Re2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Real Estate Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Re2owner"><label for="dc1594__Re2owner" class="optional js-label">Second Real Estate
+                Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Re2owner" id="dc1594__Re2owner" value="" class="Dc1594Re2-owner">
+            <p class="hint">Second Real Estate Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Re2financialdetails"><label for="dc1594__Re2financialdetails"
+                class="optional js-label">Second Real Estate Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Re2financialdetails" id="dc1594__Re2financialdetails" value=""
+                class="Dc1594Re2-financial-details">
+            <p class="hint">Second Real Estate Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Re3desc"><label for="dc1594__Re3desc" class="optional js-label">Third Real Estate
+                Asset Description</label>
+
+            <input type="text" name="dc1594__Re3desc" id="dc1594__Re3desc" value="" class="Dc1594Re3-desc">
+            <p class="hint">Third Real Estate Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Re3value"><label for="dc1594__Re3value" class="optional js-label">Third Real Estate
+                Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Re3value" id="dc1594__Re3value" value="" class="Dc1594Re3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Real Estate Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Re3owner"><label for="dc1594__Re3owner" class="optional js-label">Third Real Estate
+                Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Re3owner" id="dc1594__Re3owner" value="" class="Dc1594Re3-owner">
+            <p class="hint">Third Real Estate Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Re3financialdetails"><label for="dc1594__Re3financialdetails"
+                class="optional js-label">Third Real Estate Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Re3financialdetails" id="dc1594__Re3financialdetails" value=""
+                class="Dc1594Re3-financial-details">
+            <p class="hint">Third Real Estate Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Re4desc"><label for="dc1594__Re4desc" class="optional js-label">Fourth Real Estate
+                Asset Description</label>
+
+            <input type="text" name="dc1594__Re4desc" id="dc1594__Re4desc" value="" class="Dc1594Re4-desc">
+            <p class="hint">Fourth Real Estate Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Re4value"><label for="dc1594__Re4value" class="optional js-label">Fourth Real Estate
+                Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Re4value" id="dc1594__Re4value" value="" class="Dc1594Re4-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fourth Real Estate Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Re4owner"><label for="dc1594__Re4owner" class="optional js-label">Fourth Real Estate
+                Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Re4owner" id="dc1594__Re4owner" value="" class="Dc1594Re4-owner">
+            <p class="hint">Fourth Real Estate Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Re4financialdetails"><label for="dc1594__Re4financialdetails"
+                class="optional js-label">Fourth Real Estate Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Re4financialdetails" id="dc1594__Re4financialdetails" value=""
+                class="Dc1594Re4-financial-details">
+            <p class="hint">Fourth Real Estate Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Re5desc"><label for="dc1594__Re5desc" class="optional js-label">Fifth Real Estate
+                Asset Description</label>
+
+            <input type="text" name="dc1594__Re5desc" id="dc1594__Re5desc" value="" class="Dc1594Re5-desc">
+            <p class="hint">Fifth Real Estate Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Re5value"><label for="dc1594__Re5value" class="optional js-label">Fifth Real Estate
+                Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Re5value" id="dc1594__Re5value" value="" class="Dc1594Re5-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fifth Real Estate Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Re5owner"><label for="dc1594__Re5owner" class="optional js-label">Fifth Real Estate
+                Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Re5owner" id="dc1594__Re5owner" value="" class="Dc1594Re5-owner">
+            <p class="hint">Fifth Real Estate Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Re5financialdetails"><label for="dc1594__Re5financialdetails"
+                class="optional js-label">Fifth Real Estate Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Re5financialdetails" id="dc1594__Re5financialdetails" value=""
+                class="Dc1594Re5-financial-details">
+            <p class="hint">Fifth Real Estate Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Readditional"><label for="dc1594__Readditional" class="optional js-label">Details of
+                Any Additional Real Estate Assets</label>
+
+            <input type="text" name="dc1594__Readditional" id="dc1594__Readditional" value=""
+                class="Dc1594Re-additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField RealEstateControls">
+            <button type="button" class="RealEstateControlAdd">Add a Real Estate Asset</button>
+            <button type="button" class="RealEstateControlRemove">Remove a Real Estate Asset</button>
+        </div>
+        <div class="FormField Dc1594Vehicle1desc"><label for="dc1594__vehicle1desc" class="optional js-label">First
+                Vehicle Asset Description</label>
+
+            <input type="text" name="dc1594__vehicle1desc" id="dc1594__vehicle1desc" value=""
+                class="Dc1594Vehicle1-desc">
+            <p class="hint">i.e Cars, motorbikes, boats, machinery and other vehicles</p>
+        </div>
+        <div class="FormField Dc1594Vehicle1value"><label for="dc1594__Vehicle1value" class="optional js-label">First
+                Vehicle Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Vehicle1value" id="dc1594__Vehicle1value" value=""
+                class="Dc1594Vehicle1-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Vehicle Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Vehicle1owner"><label for="dc1594__Vehicle1owner" class="optional js-label">First
+                Vehicle Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Vehicle1owner" id="dc1594__Vehicle1owner" value=""
+                class="Dc1594Vehicle1-owner">
+            <p class="hint">First Vehicle Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Vehicle1financialdetails"><label for="dc1594__Vehicle1financialdetails"
+                class="optional js-label">First Vehicle Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Vehicle1financialdetails" id="dc1594__Vehicle1financialdetails" value=""
+                class="Dc1594Vehicle1-financial-details">
+            <p class="hint">First Vehicle Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Vehicle2desc"><label for="dc1594__Vehicle2desc" class="optional js-label">Second
+                Vehicle Asset Description</label>
+
+            <input type="text" name="dc1594__Vehicle2desc" id="dc1594__Vehicle2desc" value=""
+                class="Dc1594Vehicle2-desc">
+            <p class="hint">Second Vehicle Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Vehicle2value"><label for="dc1594__Vehicle2value" class="optional js-label">Second
+                Vehicle Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Vehicle2value" id="dc1594__Vehicle2value" value=""
+                class="Dc1594Vehicle2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Vehicle Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Vehicle2owner"><label for="dc1594__Vehicle2owner" class="optional js-label">Second
+                Vehicle Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Vehicle2owner" id="dc1594__Vehicle2owner" value=""
+                class="Dc1594Vehicle2-owner">
+            <p class="hint">Second Vehicle Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Vehicle2financialdetails"><label for="dc1594__Vehicle2financialdetails"
+                class="optional js-label">Second Vehicle Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Vehicle2financialdetails" id="dc1594__Vehicle2financialdetails" value=""
+                class="Dc1594Vehicle2-financial-details">
+            <p class="hint">Second Vehicle Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Vehicle3desc"><label for="dc1594__vehicle3desc" class="optional js-label">Third
+                Vehicle Asset Description</label>
+
+            <input type="text" name="dc1594__vehicle3desc" id="dc1594__vehicle3desc" value=""
+                class="Dc1594Vehicle3-desc">
+            <p class="hint">Third Vehicle Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Vehicle3value"><label for="dc1594__Vehicle3value" class="optional js-label">Third
+                Vehicle Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Vehicle3value" id="dc1594__Vehicle3value" value=""
+                class="Dc1594Vehicle3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Vehicle Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Vehicle3owner"><label for="dc1594__Vehicle3owner" class="optional js-label">Third
+                Vehicle Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Vehicle3owner" id="dc1594__Vehicle3owner" value=""
+                class="Dc1594Vehicle3-owner">
+            <p class="hint">Third Vehicle Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Vehicle3financialdetails"><label for="dc1594__Vehicle3financialdetails"
+                class="optional js-label">Third Vehicle Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Vehicle3financialdetails" id="dc1594__Vehicle3financialdetails" value=""
+                class="Dc1594Vehicle3-financial-details">
+            <p class="hint">Third Vehicle Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Vehicle4desc"><label for="dc1594__vehicle4desc" class="optional js-label">Fourth
+                Vehicle Asset Description</label>
+
+            <input type="text" name="dc1594__vehicle4desc" id="dc1594__vehicle4desc" value=""
+                class="Dc1594Vehicle4-desc">
+            <p class="hint">Fourth Vehicle Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Vehicle4value"><label for="dc1594__Vehicle4value" class="optional js-label">Fourth
+                Vehicle Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Vehicle4value" id="dc1594__Vehicle4value" value=""
+                class="Dc1594Vehicle4-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fourth Vehicle Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Vehicle4owner"><label for="dc1594__Vehicle4owner" class="optional js-label">Fourth
+                Vehicle Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Vehicle4owner" id="dc1594__Vehicle4owner" value=""
+                class="Dc1594Vehicle4-owner">
+            <p class="hint">Fourth Vehicle Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Vehicle4financialdetails"><label for="dc1594__Vehicle4financialdetails"
+                class="optional js-label">Fourth Vehicle Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Vehicle4financialdetails" id="dc1594__Vehicle4financialdetails" value=""
+                class="Dc1594Vehicle4-financial-details">
+            <p class="hint">Fourth Vehicle Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Vehicle5desc"><label for="dc1594__vehicle5desc" class="optional js-label">Fifth
+                Vehicle Asset Description</label>
+
+            <input type="text" name="dc1594__vehicle5desc" id="dc1594__vehicle5desc" value=""
+                class="Dc1594Vehicle5-desc">
+            <p class="hint">Fifth Vehicle Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Vehicle5value"><label for="dc1594__Vehicle5value" class="optional js-label">Fifth
+                Vehicle Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Vehicle5value" id="dc1594__Vehicle5value" value=""
+                class="Dc1594Vehicle5-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fifth Vehicle Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Vehicle5owner"><label for="dc1594__Vehicle5owner" class="optional js-label">Fifth
+                Vehicle Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Vehicle5owner" id="dc1594__Vehicle5owner" value=""
+                class="Dc1594Vehicle5-owner">
+            <p class="hint">Fifth Vehicle Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Vehicle5financialdetails"><label for="dc1594__Vehicle5financialdetails"
+                class="optional js-label">Fifth Vehicle Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Vehicle5financialdetails" id="dc1594__Vehicle5financialdetails" value=""
+                class="Dc1594Vehicle5-financial-details">
+            <p class="hint">Fifth Vehicle Asset Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Vehicleadditional"><label for="dc1594__vehicleadditional"
+                class="optional js-label">Details of Any Additional Vehicle Asset</label>
+
+            <input type="text" name="dc1594__vehicleadditional" id="dc1594__vehicleadditional" value=""
+                class="Dc1594Vehicle-additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField VehicleControls">
+            <button type="button" class="VehicleControlAdd">Add a Vehicle Asset</button>
+            <button type="button" class="VehicleControlRemove">Remove a Vehicle Asset</button>
+        </div>
+        <div class="FormField Dc1594Bank1desc"><label for="dc1594__bank1desc" class="optional js-label">First
+                Bank/Building Society/Credit Union Account Asset</label>
+
+            <input type="text" name="dc1594__bank1desc" id="dc1594__bank1desc" value="" class="Dc1594Bank1-desc">
+            <p class="hint">i.e Bank, Building Society or Credit Union Accounts</p>
+        </div>
+        <div class="FormField Dc1594Bank1value"><label for="dc1594__Bank1value" class="optional js-label">First
+                Bank/Building Society/Credit Union Account Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Bank1value" id="dc1594__Bank1value" value="" class="Dc1594Bank1-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Bank/Building Society/Credit Union Account Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Bank1owner"><label for="dc1594__Bank1owner" class="optional js-label">First
+                Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Bank1owner" id="dc1594__Bank1owner" value="" class="Dc1594Bank1-owner">
+            <p class="hint">First Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Bank1financialdetails"><label for="dc1594__Bank1financialdetails"
+                class="optional js-label">First Bank/Building Society/Credit Union Account Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Bank1financialdetails" id="dc1594__Bank1financialdetails" value=""
+                class="Dc1594Bank1-financial-details">
+            <p class="hint">First Bank/Building Society/Credit Union Account Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Bank2desc"><label for="dc1594__bank2desc" class="optional js-label">Second
+                Bank/Building Society/Credit Union Account</label>
+
+            <input type="text" name="dc1594__bank2desc" id="dc1594__bank2desc" value="" class="Dc1594Bank2-desc">
+            <p class="hint">Second Bank/Building Society/Credit Union Account</p>
+        </div>
+        <div class="FormField Dc1594Bank2value"><label for="dc1594__Bank2value" class="optional js-label">Second
+                Bank/Building Society/Credit Union Account Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Bank2value" id="dc1594__Bank2value" value="" class="Dc1594Bank2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Bank/Building Society/Credit Union Account Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Bank2owner"><label for="dc1594__Bank2owner" class="optional js-label">Second
+                Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Bank2owner" id="dc1594__Bank2owner" value="" class="Dc1594Bank2-owner">
+            <p class="hint">Second Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Bank2financialdetails"><label for="dc1594__Bank2financialdetails"
+                class="optional js-label">Second Bank/Building Society/Credit Union Account Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Bank2financialdetails" id="dc1594__Bank2financialdetails" value=""
+                class="Dc1594Bank2-financial-details">
+            <p class="hint">Second Bank/Building Society/Credit Union Account Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Bank3desc"><label for="dc1594__Bank3desc" class="optional js-label">Third
+                Bank/Building Society/Credit Union Account Description</label>
+
+            <input type="text" name="dc1594__Bank3desc" id="dc1594__Bank3desc" value="" class="Dc1594Bank3-desc">
+            <p class="hint">Third Bank/Building Society/Credit Union Account Description</p>
+        </div>
+        <div class="FormField Dc1594Bank3value"><label for="dc1594__Bank3value" class="optional js-label">Third
+                Bank/Building Society/Credit Union Account Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Bank3value" id="dc1594__Bank3value" value="" class="Dc1594Bank3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Bank/Building Society/Credit Union Account Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Bank3owner"><label for="dc1594__Bank3owner" class="optional js-label">Third
+                Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Bank3owner" id="dc1594__Bank3owner" value="" class="Dc1594Bank3-owner">
+            <p class="hint">Third Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Bank3financialdetails"><label for="dc1594__Bank3financialdetails"
+                class="optional js-label">Third Bank/Building Society/Credit Union Account Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Bank3financialdetails" id="dc1594__Bank3financialdetails" value=""
+                class="Dc1594Bank3-financial-details">
+            <p class="hint">Third Bank/Building Society/Credit Union Account Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Bank4desc"><label for="dc1594__bank4desc" class="optional js-label">Fourth
+                Bank/Building Society/Credit Union Account Description</label>
+
+            <input type="text" name="dc1594__bank4desc" id="dc1594__bank4desc" value="" class="Dc1594Bank4-desc">
+            <p class="hint">Fourth Bank/Building Society/Credit Union Account Description</p>
+        </div>
+        <div class="FormField Dc1594Bank4value"><label for="dc1594__Bank4value" class="optional js-label">Fourth
+                Bank/Building Society/Credit Union Account Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Bank4value" id="dc1594__Bank4value" value="" class="Dc1594Bank4-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fourth Bank/Building Society/Credit Union Account Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Bank4owner"><label for="dc1594__Bank4owner" class="optional js-label">Fourth
+                Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Bank4owner" id="dc1594__Bank4owner" value="" class="Dc1594Bank4-owner">
+            <p class="hint">Fourth Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Bank4financialdetails"><label for="dc1594__Bank4financialdetails"
+                class="optional js-label">Fourth Bank/Building Society/Credit Union Account Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Bank4financialdetails" id="dc1594__Bank4financialdetails" value=""
+                class="Dc1594Bank4-financial-details">
+            <p class="hint">Fourth Bank/Building Society/Credit Union Account Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Bank5desc"><label for="dc1594__bank5desc" class="optional js-label">Fifth
+                Bank/Building Society/Credit Union Account Description</label>
+
+            <input type="text" name="dc1594__bank5desc" id="dc1594__bank5desc" value="" class="Dc1594Bank5-desc">
+            <p class="hint">Fifth Bank/Building Society/Credit Union Account Description</p>
+        </div>
+        <div class="FormField Dc1594Bank5value"><label for="dc1594__Bank5value" class="optional js-label">Fifth
+                Bank/Building Society/Credit Union Account Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Bank5value" id="dc1594__Bank5value" value="" class="Dc1594Bank5-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fifth Bank/Building Society/Credit Union Account Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Bank5owner"><label for="dc1594__Bank5owner" class="optional js-label">Fifth
+                Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Bank5owner" id="dc1594__Bank5owner" value="" class="Dc1594Bank5-owner">
+            <p class="hint">Fifth Bank/Building Society/Credit Union Account Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Bank5financialdetails"><label for="dc1594__Bank5financialdetails"
+                class="optional js-label">Fifth Bank/Building Society/Credit Union Account Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Bank5financialdetails" id="dc1594__Bank5financialdetails" value=""
+                class="Dc1594Bank5-financial-details">
+            <p class="hint">Fifth Bank/Building Society/Credit Union Account Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Bankadditional"><label for="dc1594__Bankadditional"
+                class="optional js-label">Additional Bank/Building Society/Credit Union Account Details</label>
+
+            <input type="text" name="dc1594__Bankadditional" id="dc1594__Bankadditional" value=""
+                class="Dc1594Bank-additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField BankControls">
+            <button type="button" class="BankControlAdd">Add a Bank Account Asset</button>
+            <button type="button" class="BankControlRemove">Remove a Bank Account Asset</button>
+        </div>
+        <div class="FormField Dc1594Sharedesc"><label for="dc1594__sharedesc" class="optional js-label">First
+                Share/Bond/Debenture Asset Description</label>
+
+            <input type="text" name="dc1594__sharedesc" id="dc1594__sharedesc" value="" class="Dc1594Share-desc">
+            <p class="hint">Shares in Plc Companies, Bonds and Debentures (or Overall Portfolio if Managed with Reports
+                Available)</p>
+        </div>
+        <div class="FormField Dc1594Sharevalue"><label for="dc1594__Sharevalue" class="optional js-label">First
+                Share/Bond/Debenture Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Sharevalue" id="dc1594__Sharevalue" value="" class="Dc1594Share-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Share/Bond/Debenture Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Shareowner"><label for="dc1594__Shareowner" class="optional js-label">First
+                Share/Bond/Debenture Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Shareowner" id="dc1594__Shareowner" value="" class="Dc1594Share-owner">
+            <p class="hint">First Share/Bond/Debenture Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Sharefinancialdetails"><label for="dc1594__Sharefinancialdetails"
+                class="optional js-label">First Share/Bond/Debenture Asset Details of Financial Contribution by Parties
+                Towards Asset</label>
+
+            <input type="text" name="dc1594__Sharefinancialdetails" id="dc1594__Sharefinancialdetails" value=""
+                class="Dc1594Share-financial-details">
+            <p class="hint">First Share/Bond/Debenture Asset Details of Financial Contribution by Parties Towards Asset
+            </p>
+        </div>
+        <div class="FormField Dc1594Share2desc"><label for="dc1594__share2desc" class="optional js-label">Second
+                Share/Bond/Debenture Asset Description</label>
+
+            <input type="text" name="dc1594__share2desc" id="dc1594__share2desc" value="" class="Dc1594Share2-desc">
+            <p class="hint">Second Share/Bond/Debenture Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Share2value"><label for="dc1594__Share2value" class="optional js-label">Second
+                Share/Bond/Debenture Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Share2value" id="dc1594__Share2value" value="" class="Dc1594Share2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Share/Bond/Debenture Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Share2owner"><label for="dc1594__Share2owner" class="optional js-label">Second
+                Share/Bond/Debenture Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Share2owner" id="dc1594__Share2owner" value="" class="Dc1594Share2-owner">
+            <p class="hint">Second Share/Bond/Debenture Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Share2financialdetails"><label for="dc1594__Share2financialdetails"
+                class="optional js-label">Second Share/Bond/Debenture Details of Financial Contribution by Parties
+                Towards Asset</label>
+
+            <input type="text" name="dc1594__Share2financialdetails" id="dc1594__Share2financialdetails" value=""
+                class="Dc1594Share2-financial-details">
+            <p class="hint">Second Share/Bond/Debenture Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Share3desc"><label for="dc1594__share3desc" class="optional js-label">Third
+                Share/Bond/Debenture Asset Description</label>
+
+            <input type="text" name="dc1594__share3desc" id="dc1594__share3desc" value="" class="Dc1594Share3-desc">
+            <p class="hint">Third Share/Bond/Debenture Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Share3value"><label for="dc1594__Share3value" class="optional js-label">Third
+                Share/Bond/Debenture Asset Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Share3value" id="dc1594__Share3value" value="" class="Dc1594Share3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Share/Bond/Debenture Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Share3owner"><label for="dc1594__Share3owner" class="optional js-label">Third
+                Share/Bond/Debenture Asset Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Share3owner" id="dc1594__Share3owner" value="" class="Dc1594Share3-owner">
+            <p class="hint">Third Share/Bond/Debenture Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Share3financialdetails"><label for="dc1594__Share3financialdetails"
+                class="optional js-label">Third Share/Bond/Debenture Asset Details of Financial Contribution by Parties
+                Towards Asset</label>
+
+            <input type="text" name="dc1594__Share3financialdetails" id="dc1594__Share3financialdetails" value=""
+                class="Dc1594Share3-financial-details">
+            <p class="hint">Third Share/Bond/Debenture Asset Details of Financial Contribution by Parties Towards Asset
+            </p>
+        </div>
+        <div class="FormField Dc1594SharesAddtional"><label for="dc1594__SharesAddtional"
+                class="optional js-label">Additional Share/Bond/Debenture Assets</label>
+
+            <input type="text" name="dc1594__SharesAddtional" id="dc1594__SharesAddtional" value=""
+                class="Dc1594Shares-Addtional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField ShareControls">
+            <button type="button" class="ShareControlAdd">Add a Share/Bond/Debenture Asset</button>
+            <button type="button" class="ShareControlRemove">Remove a Share/Bond/Debenture Asset</button>
+        </div>
+        <div class="FormField Dc1594Intrestdesc"><label for="dc1594__Intrestdesc" class="optional js-label">First
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Asset Description</label>
+
+            <input type="text" name="dc1594__Intrestdesc" id="dc1594__Intrestdesc" value="" class="Dc1594Intrest-desc">
+            <p class="hint">i.e Interest in Trusts, Partnerships, Pty Ltd Companies, Directorship, Secretary/Share
+                Holdings</p>
+        </div>
+        <div class="FormField Dc1594Intrestvalue"><label for="dc1594__Intrestvalue" class="optional js-label">First
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Asset Estimated Current
+                Value</label>
+
+            <input type="text" name="dc1594__Intrestvalue" id="dc1594__Intrestvalue" value=""
+                class="Dc1594Intrest-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Asset
+                Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Intrestowner"><label for="dc1594__Intrestowner" class="optional js-label">First
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Intrestowner" id="dc1594__Intrestowner" value=""
+                class="Dc1594Intrest-owner">
+            <p class="hint">First Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Intrestfinancialdetails"><label for="dc1594__Intrestfinancialdetails"
+                class="required js-label">First Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share
+                Holding Details of Financial Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Intrestfinancialdetails" id="dc1594__Intrestfinancialdetails" value=""
+                class="Dc1594Intrest-financial-details" required="required">
+            <p class="hint">First Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Details
+                of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Intrest2desc"><label for="dc1594__Intrest2desc" class="optional js-label">Second
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Description</label>
+
+            <input type="text" name="dc1594__Intrest2desc" id="dc1594__Intrest2desc" value=""
+                class="Dc1594Intrest2-desc">
+            <p class="hint">Second Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Description</p>
+        </div>
+        <div class="FormField Dc1594Intrest2value"><label for="dc1594__Intrest2value" class="optional js-label">Second
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Estimated Current
+                Value</label>
+
+            <input type="text" name="dc1594__Intrest2value" id="dc1594__Intrest2value" value=""
+                class="Dc1594Intrest2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Intrest2owner"><label for="dc1594__Intrest2owner" class="optional js-label">Second
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Intrest2owner" id="dc1594__Intrest2owner" value=""
+                class="Dc1594Intrest2-owner">
+            <p class="hint">Second Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Intrest2financialdetails"><label for="dc1594__Intrest2financialdetails"
+                class="optional js-label">Second Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share
+                Holding Details of Financial Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Intrest2financialdetails" id="dc1594__Intrest2financialdetails" value=""
+                class="Dc1594Intrest2-financial-details">
+            <p class="hint">Second Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Details
+                of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Intrest3desc"><label for="dc1594__Intrest3desc" class="optional js-label">Third
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Description</label>
+
+            <input type="text" name="dc1594__Intrest3desc" id="dc1594__Intrest3desc" value=""
+                class="Dc1594Intrest3-desc">
+            <p class="hint">Third Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Description</p>
+        </div>
+        <div class="FormField Dc1594Intrest3value"><label for="dc1594__Intrest3value" class="optional js-label">Third
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Estimated Current
+                Value</label>
+
+            <input type="text" name="dc1594__Intrest3value" id="dc1594__Intrest3value" value=""
+                class="Dc1594Intrest3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Intrest3owner"><label for="dc1594__Intrest3owner" class="optional js-label">Third
+                Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Intrest3owner" id="dc1594__Intrest3owner" value=""
+                class="Dc1594Intrest3-owner">
+            <p class="hint">Third Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding
+                Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Intrest3financialdetails"><label for="dc1594__Intrest3financialdetails"
+                class="optional js-label">Third Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share
+                Holding Details of Financial Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Intrest3financialdetails" id="dc1594__Intrest3financialdetails" value=""
+                class="Dc1594Intrest3-financial-details">
+            <p class="hint">Third Interest/Trusts/Partnerships, Companies, Directorship/Secretary/Share Holding Details
+                of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Interestadditional"><label for="dc1594__interestadditional"
+                class="optional js-label">Additional Interest in Trusts, Partnerships, Pty Ltd Companies, Directorship,
+                Secretary/Share Holdings</label>
+
+            <input type="text" name="dc1594__interestadditional" id="dc1594__interestadditional" value=""
+                class="Dc1594Interest-additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField InterestControls">
+            <button type="button" class="InterestControlAdd">Add an Interest/Trust/Partnership Asset</button>
+            <button type="button" class="InterestControlRemove">Remove an Interest/Trust/Partnership Asset</button>
+        </div>
+        <div class="FormField Dc1594Liabilitiesdesc"><label for="dc1594__Liabilitiesdesc"
+                class="optional js-label">First Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilitiesdesc" id="dc1594__Liabilitiesdesc" value=""
+                class="Dc1594Liabilities-desc">
+            <p class="hint">i.e Liabilities (Mortgages inc confirmation of any re-draws and lines of credit, Credit
+                Cards, Hire Purchase, Private loans and Beneficiary or director loans) Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilitiesvalue"><label for="dc1594__Liabilitiesvalue"
+                class="optional js-label">First Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilitiesvalue" id="dc1594__Liabilitiesvalue" value=""
+                class="Dc1594Liabilities-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilitiesowner"><label for="dc1594__Liabilitiesowner"
+                class="optional js-label">First Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilitiesowner" id="dc1594__Liabilitiesowner" value=""
+                class="Dc1594Liabilities-owner">
+            <p class="hint">First Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilitiesfinancialdetails"><label for="dc1594__Liabilitiesfinancialdetails"
+                class="optional js-label">First Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilitiesfinancialdetails" id="dc1594__Liabilitiesfinancialdetails"
+                value="" class="Dc1594Liabilities-financial-details">
+            <p class="hint">First Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities2desc"><label for="dc1594__Liabilities2desc"
+                class="optional js-label">Second Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities2desc" id="dc1594__Liabilities2desc" value=""
+                class="Dc1594Liabilities2-desc">
+            <p class="hint">Second Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities2value"><label for="dc1594__Liabilities2value"
+                class="optional js-label">Second Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilities2value" id="dc1594__Liabilities2value" value=""
+                class="Dc1594Liabilities2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities2owner"><label for="dc1594__Liabilities2owner"
+                class="optional js-label">Second Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities2owner" id="dc1594__Liabilities2owner" value=""
+                class="Dc1594Liabilities2-owner">
+            <p class="hint">Second Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities2financialdetails"><label for="dc1594__Liabilities2financialdetails"
+                class="optional js-label">Second Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities2financialdetails" id="dc1594__Liabilities2financialdetails"
+                value="" class="Dc1594Liabilities2-financial-details">
+            <p class="hint">Second Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities3desc"><label for="dc1594__Liabilities3desc"
+                class="optional js-label">Third Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities3desc" id="dc1594__Liabilities3desc" value=""
+                class="Dc1594Liabilities3-desc">
+            <p class="hint">Third Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities3value"><label for="dc1594__Liabilities3value"
+                class="optional js-label">Third Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilities3value" id="dc1594__Liabilities3value" value=""
+                class="Dc1594Liabilities3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities3owner"><label for="dc1594__Liabilities3owner"
+                class="optional js-label">Third Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities3owner" id="dc1594__Liabilities3owner" value=""
+                class="Dc1594Liabilities3-owner">
+            <p class="hint">Third Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities3financialdetails"><label for="dc1594__Liabilities3financialdetails"
+                class="optional js-label">Third Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities3financialdetails" id="dc1594__Liabilities3financialdetails"
+                value="" class="Dc1594Liabilities3-financial-details">
+            <p class="hint">Third Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities4desc"><label for="dc1594__Liabilities4desc"
+                class="optional js-label">Fourth Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities4desc" id="dc1594__Liabilities4desc" value=""
+                class="Dc1594Liabilities4-desc">
+            <p class="hint">Fourth Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities4value"><label for="dc1594__Liabilities4value"
+                class="optional js-label">Fourth Liability Estimated Value</label>
+
+            <input type="text" name="dc1594__Liabilities4value" id="dc1594__Liabilities4value" value=""
+                class="Dc1594Liabilities4-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fourth Liability Estimated Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities4owner"><label for="dc1594__Liabilities4owner"
+                class="optional js-label">Fourth Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities4owner" id="dc1594__Liabilities4owner" value=""
+                class="Dc1594Liabilities4-owner">
+            <p class="hint">Fourth Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities4financialdetails"><label for="dc1594__Liabilities4financialdetails"
+                class="optional js-label">Fourth Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities4financialdetails" id="dc1594__Liabilities4financialdetails"
+                value="" class="Dc1594Liabilities4-financial-details">
+            <p class="hint">Fourth Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities5desc"><label for="dc1594__Liabilities5desc"
+                class="optional js-label">Fifth Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities5desc" id="dc1594__Liabilities5desc" value=""
+                class="Dc1594Liabilities5-desc">
+            <p class="hint">Fifth Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities5value"><label for="dc1594__Liabilities5value"
+                class="optional js-label">Fifth Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilities5value" id="dc1594__Liabilities5value" value=""
+                class="Dc1594Liabilities5-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Fifth Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities5owner"><label for="dc1594__Liabilities5owner"
+                class="optional js-label">Fifth Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities5owner" id="dc1594__Liabilities5owner" value=""
+                class="Dc1594Liabilities5-owner">
+            <p class="hint">Fifth Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities5financialdetails"><label for="dc1594__Liabilities5financialdetails"
+                class="optional js-label">Fifth Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities5financialdetails" id="dc1594__Liabilities5financialdetails"
+                value="" class="Dc1594Liabilities5-financial-details">
+            <p class="hint">Fifth Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities6desc"><label for="dc1594__Liabilities6desc"
+                class="optional js-label">Sixth Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities6desc" id="dc1594__Liabilities6desc" value=""
+                class="Dc1594Liabilities6-desc">
+            <p class="hint">Sixth Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities6value"><label for="dc1594__Liabilities6value"
+                class="optional js-label">Sixth Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilities6value" id="dc1594__Liabilities6value" value=""
+                class="Dc1594Liabilities6-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Sixth Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities6owner"><label for="dc1594__Liabilities6owner"
+                class="optional js-label">Sixth Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities6owner" id="dc1594__Liabilities6owner" value=""
+                class="Dc1594Liabilities6-owner">
+            <p class="hint">Sixth Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities6financialdetails"><label for="dc1594__Liabilities6financialdetails"
+                class="optional js-label">Sixth Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities6financialdetails" id="dc1594__Liabilities6financialdetails"
+                value="" class="Dc1594Liabilities6-financial-details">
+            <p class="hint">Sixth Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities7desc"><label for="dc1594__Liabilities7desc"
+                class="optional js-label">Seventh Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities7desc" id="dc1594__Liabilities7desc" value=""
+                class="Dc1594Liabilities7-desc">
+            <p class="hint">Seventh Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities7value"><label for="dc1594__Liabilities7value"
+                class="optional js-label">Seventh Liability Estimated Current Value</label>
+
+            <input type="text" name="dc1594__Liabilities7value" id="dc1594__Liabilities7value" value=""
+                class="Dc1594Liabilities7-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Seventh Liability Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities7owner"><label for="dc1594__Liabilities7owner"
+                class="optional js-label">Seventh Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities7owner" id="dc1594__Liabilities7owner" value=""
+                class="Dc1594Liabilities7-owner">
+            <p class="hint">Seventh Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities7financialdetails"><label for="dc1594__Liabilities7financialdetails"
+                class="optional js-label">Seventh Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities7financialdetails" id="dc1594__Liabilities7financialdetails"
+                value="" class="Dc1594Liabilities7-financial-details">
+            <p class="hint">Seventh Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Liabilities8desc"><label for="dc1594__Liabilities8desc"
+                class="optional js-label">Eighth Liability Description</label>
+
+            <input type="text" name="dc1594__Liabilities8desc" id="dc1594__Liabilities8desc" value=""
+                class="Dc1594Liabilities8-desc">
+            <p class="hint">Eighth Liability Description</p>
+        </div>
+        <div class="FormField Dc1594Liabilities8value"><label for="dc1594__Liabilities8value"
+                class="optional js-label">Eighth Liability Estimated Value</label>
+
+            <input type="text" name="dc1594__Liabilities8value" id="dc1594__Liabilities8value" value=""
+                class="Dc1594Liabilities8-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Eighth Liability Estimated Value</p>
+        </div>
+        <div class="FormField Dc1594Liabilities8owner"><label for="dc1594__Liabilities8owner"
+                class="optional js-label">Eighth Liability Recorded/Registered Owner/s</label>
+
+            <input type="text" name="dc1594__Liabilities8owner" id="dc1594__Liabilities8owner" value=""
+                class="Dc1594Liabilities8-owner">
+            <p class="hint">Eighth Liability Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Liabilities8financialdetails"><label for="dc1594__Liabilities8financialdetails"
+                class="optional js-label">Eighth Liability Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Liabilities8financialdetails" id="dc1594__Liabilities8financialdetails"
+                value="" class="Dc1594Liabilities8-financial-details">
+            <p class="hint">Eighth Liability Details of Financial Contribution by Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594LiabilitiesAdditional"><label for="dc1594__LiabilitiesAdditional"
+                class="optional js-label">Additional Liabilities (Mortgages inc confirmation of any re-draws and lines
+                of credit, Credit Cards, Hire Purchase, Private loans and Beneficiary or director loans)</label>
+
+            <input type="text" name="dc1594__LiabilitiesAdditional" id="dc1594__LiabilitiesAdditional" value=""
+                class="Dc1594Liabilities-Additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField LiabilityControls">
+            <button type="button" class="LiabilityControlAdd">Add a Liability</button>
+            <button type="button" class="LiabilityControlRemove">Remove a Liability</button>
+        </div>
+        <div class="FormField Dc1594Superannuationdesc"><label for="dc1594__Superannuationdesc"
+                class="optional js-label">First Superannuation/Insurance/Other Significant Asset</label>
+
+            <input type="text" name="dc1594__Superannuationdesc" id="dc1594__Superannuationdesc" value=""
+                class="Dc1594Superannuation-desc">
+            <p class="hint">i.e Superannuation, life insurance policies and other significant assets</p>
+        </div>
+        <div class="FormField Dc1594Superannuationvalue"><label for="dc1594__Superannuationvalue"
+                class="optional js-label">First Superannuation/Insurance/Other Significant Asset Current Estimated
+                Value</label>
+
+            <input type="text" name="dc1594__Superannuationvalue" id="dc1594__Superannuationvalue" value=""
+                class="Dc1594Superannuation-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">First Superannuation/Insurance/Other Significant Asset Current Estimated Value</p>
+        </div>
+        <div class="FormField Dc1594Superannuationowner"><label for="dc1594__Superannuationowner"
+                class="optional js-label">First Superannuation/Insurance/Other Significant Asset Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Superannuationowner" id="dc1594__Superannuationowner" value=""
+                class="Dc1594Superannuation-owner">
+            <p class="hint">First Superannuation/Insurance/Other Significant Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Superannuationfinancialdetails"><label for="dc1594__Superannuationfinancialdetails"
+                class="optional js-label">First Superannuation/Insurance/Other Significant Asset Details of Financial
+                Contribution by Parties Towards Asset</label>
+
+            <input type="text" name="dc1594__Superannuationfinancialdetails" id="dc1594__Superannuationfinancialdetails"
+                value="" class="Dc1594Superannuation-financial-details">
+            <p class="hint">First Superannuation/Insurance/Other Significant Asset Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Superannuation2desc"><label for="dc1594__Superannuation2desc"
+                class="optional js-label">Second Superannuation/Insurance/Other Significant Asset Description</label>
+
+            <input type="text" name="dc1594__Superannuation2desc" id="dc1594__Superannuation2desc" value=""
+                class="Dc1594Superannuation2-desc">
+            <p class="hint">Second Superannuation/Insurance/Other Significant Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Superannuation2value"><label for="dc1594__Superannuation2value"
+                class="optional js-label">Second Superannuation/Insurance/Other Significant Asset Estimated Current
+                Value</label>
+
+            <input type="text" name="dc1594__Superannuation2value" id="dc1594__Superannuation2value" value=""
+                class="Dc1594Superannuation2-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Second Superannuation/Insurance/Other Significant Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Superannuation2owner"><label for="dc1594__Superannuation2owner"
+                class="optional js-label">Second Superannuation/Insurance/Other Significant Asset Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Superannuation2owner" id="dc1594__Superannuation2owner" value=""
+                class="Dc1594Superannuation2-owner">
+            <p class="hint">Second Superannuation/Insurance/Other Significant Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Superannuation2financialdetails"><label
+                for="dc1594__Superannuation2financialdetails" class="optional js-label">Second
+                Superannuation/Insurance/Other Significant Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Superannuation2financialdetails"
+                id="dc1594__Superannuation2financialdetails" value="" class="Dc1594Superannuation2-financial-details">
+            <p class="hint">Second Superannuation/Insurance/Other Significant Asset Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Superannuation3desc"><label for="dc1594__Superannuation3desc"
+                class="optional js-label">Third Superannuation/Insurance/Other Significant Asset Description</label>
+
+            <input type="text" name="dc1594__Superannuation3desc" id="dc1594__Superannuation3desc" value=""
+                class="Dc1594Superannuation3-desc">
+            <p class="hint">Third Superannuation/Insurance/Other Significant Asset Description</p>
+        </div>
+        <div class="FormField Dc1594Superannuation3value"><label for="dc1594__Superannuation3value"
+                class="optional js-label">Third Superannuation/Insurance/Other Significant Asset Estimated Current
+                Value</label>
+
+            <input type="text" name="dc1594__Superannuation3value" id="dc1594__Superannuation3value" value=""
+                class="Dc1594Superannuation3-value"
+                onchange=";if (this.value != '') { this.value=ActionStep_Utilities_Math.formatCurrency(this.value); } "
+                allowEmpty="">
+            <p class="hint">Third Superannuation/Insurance/Other Significant Asset Estimated Current Value</p>
+        </div>
+        <div class="FormField Dc1594Superannuation3owner"><label for="dc1594__Superannuation3owner"
+                class="optional js-label">Third Superannuation/Insurance/Other Significant Asset Recorded/Registered
+                Owner/s</label>
+
+            <input type="text" name="dc1594__Superannuation3owner" id="dc1594__Superannuation3owner" value=""
+                class="Dc1594Superannuation3-owner">
+            <p class="hint">Third Superannuation/Insurance/Other Significant Asset Recorded/Registered Owner/s</p>
+        </div>
+        <div class="FormField Dc1594Superannuation3financialdetails"><label
+                for="dc1594__Superannuation3financialdetails" class="optional js-label">Third
+                Superannuation/Insurance/Other Significant Asset Details of Financial Contribution by Parties Towards
+                Asset</label>
+
+            <input type="text" name="dc1594__Superannuation3financialdetails"
+                id="dc1594__Superannuation3financialdetails" value="" class="Dc1594Superannuation3-financial-details">
+            <p class="hint">Third Superannuation/Insurance/Other Significant Asset Details of Financial Contribution by
+                Parties Towards Asset</p>
+        </div>
+        <div class="FormField Dc1594Superannuationadditional"><label for="dc1594__Superannuationadditional"
+                class="optional js-label">Additional Superannuation, Life Insurance Policies and Other Significant
+                Assets</label>
+
+            <input type="text" name="dc1594__Superannuationadditional" id="dc1594__Superannuationadditional" value=""
+                class="Dc1594Superannuation-additional">
+            <p class="hint">Please Specify Asset Description, Estimated Current Value, Recorded/Registered Owner/s and
+                Details of Financial Contribution by Parties Towards Asset.</p>
+        </div>
+        <div class="FormField SuperControls">
+            <button type="button" class="SuperControlAdd">Add a Superannuation/Insurance Asset</button>
+            <button type="button" class="SuperControlRemove">Remove a Superannuation/Insurance Asset</button>
+        </div>
+        <div class="FormField Dc1594Ongoingcases"><label for="dc1594__ongoingcases" class="optional js-label">Are There
+                any Ongoing cases about Family Law, Child Support, Family Violence or Child Welfare That Involve any
+                Party to This Matter?</label>
+
+            <input type="text" name="dc1594__ongoingcases" id="dc1594__ongoingcases" value=""
+                class="Dc1594Ongoingcases">
+            <p class="hint">Are There any Ongoing cases about Family Law, Child Support, Family Violence or Child
+                Welfare That Involve any Party to This Matter?</p>
+        </div>
+        <div class="FormField Dc1594Existingorders"><label for="dc1594__existingorders" class="optional js-label">Are
+                There Any Existing Orders (Property or Parenting), Agreements, Parenting Plans or Undertakings to a
+                Court About Family Law, Child Support, Family Violence or Child Welfare (DOCS) That Involve any Party to
+                This Matter?</label>
+
+            <input type="text" name="dc1594__existingorders" id="dc1594__existingorders" value=""
+                class="Dc1594Existingorders">
+            <p class="hint">Are There Any Existing Orders (Property or Parenting), Agreements, Parenting Plans or
+                Undertakings to a Court About Family Law, Child Support, Family Violence or Child Welfare (DOCS) That
+                Involve any Party to This Matter?</p>
+        </div>
+        <div class="FormField Dc1594Clientgoalslongterm"><label for="dc1594__clientgoalslongterm"
+                class="optional js-label">What Are Your Goals for the Meeting and Longer Term?</label>
+
+            <input type="text" name="dc1594__clientgoalslongterm" id="dc1594__clientgoalslongterm" value=""
+                class="Dc1594Clientgoalslongterm">
+            <p class="hint">What Are Your Goals for the Meeting and Longer Term?</p>
+        </div>
+        <div class="FormField Dc1594Clienthealthissues"><label for="dc1594__clienthealthissues"
+                class="optional js-label">Do You Have Any Significant Health Issues?</label>
+
+            <span class="as-element-checkbox"><input type="hidden" name="dc1594__clienthealthissues" value=""><input
+                    type="checkbox" name="dc1594__clienthealthissues" id="dc1594__clienthealthissues" value="on"
+                    class="Dc1594Clienthealthissues"><label for="dc1594__clienthealthissues"></label></span>
+            <p class="hint">Do You Have Any Significant Health Issues?</p>
+        </div>
+        <div class="FormField Dc1594Clienthealthissuedetails"><label for="dc1594__clienthealthissuedetails"
+                class="optional js-label">What Are the Details of Your Significant Health Issues?</label>
+
+            <input type="text" name="dc1594__clienthealthissuedetails" id="dc1594__clienthealthissuedetails" value=""
+                class="Dc1594Clienthealthissuedetails">
+            <p class="hint">What Are the Details of Your Significant Health Issues?</p>
+        </div>
+        <div class="FormField Dc1594Clienthaswill"><label for="dc1594__clienthaswill" class="optional js-label">Have You
+                Made a Will?</label>
+
+            <span class="as-element-checkbox"><input type="hidden" name="dc1594__clienthaswill" value=""><input
+                    type="checkbox" name="dc1594__clienthaswill" id="dc1594__clienthaswill" value="on"
+                    class="Dc1594Clienthaswill"><label for="dc1594__clienthaswill"></label></span>
+            <p class="hint">Have You Made a Will?</p>
+        </div>
+        <div class="FormField Dc1594Cleintdateoflastwill"><label for="dc1594__cleintdateoflastwill"
+                class="optional js-label">If Yes, What Is the Date of Your Last Will?</label>
+
+            <input type="text" name="dc1594__cleintdateoflastwill" id="dc1594__cleintdateoflastwill" value=""
+                class="Dc1594Cleintdateoflastwill">
+            <p class="hint">If Yes, What Is the Date of Your Last Will?</p>
+        </div>
+        <div class="FormField Dc1594ClientgivenpowerofAttorney"><label for="dc1594__clientgivenpowerofAttorney"
+                class="optional js-label">Have You Given Any Person Power of Attorney for You?</label>
+
+            <span class="as-element-checkbox"><input type="hidden" name="dc1594__clientgivenpowerofAttorney"
+                    value=""><input type="checkbox" name="dc1594__clientgivenpowerofAttorney"
+                    id="dc1594__clientgivenpowerofAttorney" value="on" class="Dc1594ClientgivenpowerofAttorney"><label
+                    for="dc1594__clientgivenpowerofAttorney"></label></span>
+            <p class="hint">If yes, please provide the additional details below</p>
+        </div>
+        <div class="FormField Dc1594Powerofatype"><label for="dc1594__powerofatype" class="optional js-label">Please
+                select what type of Power of Attorney</label>
+
+            <div class="multi-select" id="dc1594__powerofatypeDropdown">
+                <select name="dc1594__powerofatype[]" id="dc1594__powerofatype" multiple="multiple"
+                    class="Dc1594Power-of-a-type">
+                    <option value="Gen-f" label="General (financial)">General (financial)</option>
+                    <option value="End-f" label="Enduring (financial)">Enduring (financial)</option>
+                    <option value="End-ph" label="Enduring (personal and health)">
+                        Enduring (personal and health)</option>
+                </select>
+                <div class="selectBox" id="dc1594__powerofatypeSelectBox" tabindex="0" role="button"
+                    aria-haspopup="listbox" aria-expanded="false">
+                    <span id="dc1594__powerofatypeBoxText">(Please Select)</span>
+                </div>
+                <div class="checkboxes" id="dc1594__powerofatypeCheckboxes" role="listbox" aria-multiselectable="true">
+                    <label><input type="checkbox" value="Gen-f">General (financial)</label>
+                    <label><input type="checkbox" value="End-f">Enduring (financial)</label>
+                    <label><input type="checkbox" value="End-ph">Enduring (personal and health)</label>
+                </div>
+            </div>
+            <p class="hint">i.e General (financial), Enduring (financial), Enduring (personal and health)</p>
+        </div>
+        <div class="FormField Dc1594Generaldatepowerofa"><label for="dc1594__Generaldatepowerofa"
+                class="optional js-label">Date of General (financial) Power of Attorney</label>
+
+            <input type="text" name="dc1594__Generaldatepowerofa" id="dc1594__Generaldatepowerofa" value=""
+                class="Dc1594General-date-power-of-adateControl">
+            <p class="hint">General (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Generalpowerofanames"><label for="dc1594__generalpowerofanames"
+                class="optional js-label">Named General (financial) Attorney/s</label>
+
+            <input type="text" name="dc1594__generalpowerofanames" id="dc1594__generalpowerofanames" value=""
+                class="Dc1594General-power-of-a-names">
+            <p class="hint">General (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Genpowerofarevoke"><label for="dc1594__genpowerofarevoke"
+                class="optional js-label">Do you Wish to Revoke Your General (financial) Power of Attorney for
+                You?</label>
+
+            <select name="dc1594__genpowerofarevoke" id="dc1594__genpowerofarevoke" class="Dc1594Gen-power-of-a-revoke">
+                <option value="No" label="No">No</option>
+                <option value="Yes" label="Yes">Yes</option>
+            </select>
+            <p class="hint">General (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Enduringdatepowerofa"><label for="dc1594__Enduringdatepowerofa"
+                class="optional js-label">Date of Enduring (financial) Power of Attorney</label>
+
+            <input type="text" name="dc1594__Enduringdatepowerofa" id="dc1594__Enduringdatepowerofa" value=""
+                class="Dc1594Enduring-date-power-of-adateControl">
+            <p class="hint">Enduring (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Endpowrofanames"><label for="dc1594__endpowrofanames"
+                class="optional js-label">Named Enduring (financial) Attorney/s</label>
+
+            <input type="text" name="dc1594__endpowrofanames" id="dc1594__endpowrofanames" value=""
+                class="Dc1594End-powr-of-a-names">
+            <p class="hint">Enduring (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Endpowerofarevoke"><label for="dc1594__endpowerofarevoke"
+                class="optional js-label">Do you Wish to Revoke Your Enduring (financial) Power of Attorney for
+                You?</label>
+
+            <select name="dc1594__endpowerofarevoke" id="dc1594__endpowerofarevoke" class="Dc1594End-power-of-a-revoke">
+                <option value="Yes" label="Yes">Yes</option>
+                <option value="No" label="No">No</option>
+            </select>
+            <p class="hint">Enduring (financial) Details</p>
+        </div>
+        <div class="FormField Dc1594Endphdatepowerofa"><label for="dc1594__endphdatepowerofa"
+                class="optional js-label">Date of Enduring (personal and health) Power of Attorney</label>
+
+            <input type="text" name="dc1594__endphdatepowerofa" id="dc1594__endphdatepowerofa" value=""
+                class="Dc1594End-ph-date-power-of-adateControl">
+            <p class="hint">Enduring (personal and health) Details</p>
+        </div>
+        <div class="FormField Dc1594Endphpowerofanames"><label for="dc1594__endphpowerofanames"
+                class="optional js-label">Named Enduring (personal and health) Attorney/s</label>
+
+            <input type="text" name="dc1594__endphpowerofanames" id="dc1594__endphpowerofanames" value=""
+                class="Dc1594End-ph-power-of-a-names">
+            <p class="hint">Enduring (personal and health)</p>
+        </div>
+        <div class="FormField Dc1594Endphpowerofarevoke"><label for="dc1594__endphpowerofarevoke"
+                class="optional js-label">Do You Wish to Revoke Your Enduring (personal and health) Power of Attorney
+                for You?</label>
+
+            <select name="dc1594__endphpowerofarevoke" id="dc1594__endphpowerofarevoke"
+                class="Dc1594End-ph-power-of-a-revoke">
+                <option value="Yes" label="Yes">Yes</option>
+                <option value="No" label="No">No</option>
+            </select>
+            <p class="hint">Enduring (personal and health)</p>
+        </div>
+        <div class="FormField Dc1594Clientwishtomakenewwill"><label for="dc1594__clientwishtomakenewwill"
+                class="optional js-label">Do You Wish to Make a New Will?</label>
+
+            <span class="as-element-checkbox"><input type="hidden" name="dc1594__clientwishtomakenewwill"
+                    value=""><input type="checkbox" name="dc1594__clientwishtomakenewwill"
+                    id="dc1594__clientwishtomakenewwill" value="on" class="Dc1594Clientwishtomakenewwill"><label
+                    for="dc1594__clientwishtomakenewwill"></label></span>
+            <p class="hint">Do You Wish to Make a New Will?</p>
+        </div>
+        <div class="FormField Dc1594Clientwishtomakepowerofattorneydocument"><label
+                for="dc1594__clientwishtomakepowerofattorneydocument" class="optional js-label">Do You Wish to Make a
+                New Power of Attorney Document?</label>
+
+            <span class="as-element-checkbox"><input type="hidden"
+                    name="dc1594__clientwishtomakepowerofattorneydocument" value=""><input type="checkbox"
+                    name="dc1594__clientwishtomakepowerofattorneydocument"
+                    id="dc1594__clientwishtomakepowerofattorneydocument" value="on"
+                    class="Dc1594Clientwishtomakepowerofattorneydocument"><label
+                    for="dc1594__clientwishtomakepowerofattorneydocument"></label></span>
+            <p class="hint">Do You Wish to Make a New Power of Attorney Document?</p>
+        </div>
+        <div class="FormField Dc1594Clientwishtoseverjointtenancy"><label for="dc1594__clientwishtoseverjointtenancy"
+                class="optional js-label">Do You Wish to Sever Any Joint Tenancy?</label>
+
+            <span class="as-element-checkbox"><input type="hidden" name="dc1594__clientwishtoseverjointtenancy"
+                    value=""><input type="checkbox" name="dc1594__clientwishtoseverjointtenancy"
+                    id="dc1594__clientwishtoseverjointtenancy" value="on"
+                    class="Dc1594Clientwishtoseverjointtenancy"><label
+                    for="dc1594__clientwishtoseverjointtenancy"></label></span>
+            <p class="hint">Do You Wish to Sever Any Joint Tenancy? (real estate held as joint tenant with another
+                person)</p>
+        </div>
+        <div class="FormField Submit">
+            <input type="submit" name="Submit" id="Submit" value="Submit" class="Submit">
+            <script>
+                document.getElementById("Submit").addEventListener("click", function () {
+                    const button = this;
+                    button.style.display = "none";
+                    setTimeout(function () {
+                        button.style.display = "inline-block";
+                    }, 5000);
+                });
+            </script>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const prefix = "GPForms";
+
+                // Rehydrate saved values
+                document.querySelectorAll("input[id], select[id], textarea[id]").forEach(el => {
+                    const key = prefix + el.id;
+                    if (localStorage.getItem(key) === null) return;
+                    const val = localStorage.getItem(key);
+
+                    if (el.type === "checkbox") {
+                        el.checked = (val === "true");
+                    } else {
+                        el.value = val;
+                    }
+
+                    el.dispatchEvent(new Event("change", { bubbles: true }));
+                });
+
+                // Save on every change
+                document.querySelectorAll("input[id], select[id], textarea[id]").forEach(el => {
+                    el.addEventListener("change", () => {
+                        const key = prefix + el.id;
+                        if (el.type === "checkbox") {
+                            localStorage.setItem(key, el.checked);
+                        } else {
+                            localStorage.setItem(key, el.value);
+                        }
+                    });
+                });
+            });
+        </script>
+    </form>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            function getWrapper(id) {
+                if (!id) {
+                    return null;
+                }
+                var field = document.getElementById(id);
+                return field ? field.closest('.FormField') : null;
+            }
+
+            function setWrapperVisible(wrapper, visible) {
+                if (!wrapper) {
+                    return;
+                }
+                wrapper.style.display = visible ? '' : 'none';
+                var fields = wrapper.querySelectorAll('input, select, textarea');
+                for (var i = 0; i < fields.length; i++) {
+                    if (visible) {
+                        fields[i].removeAttribute('disabled');
+                    } else {
+                        fields[i].setAttribute('disabled', 'disabled');
+                    }
+                }
+            }
+
+            function isGroupVisible(group) {
+                var targetId = group.baseIds && group.baseIds.length ? group.baseIds[0] : group.genderSpecifyId;
+                var wrapper = getWrapper(targetId);
+                return wrapper && wrapper.style.display !== 'none';
+            }
+
+            function updateGenderSpecifyVisibility(group) {
+                if (!group.genderSelectId || !group.genderSpecifyId) {
+                    return;
+                }
+                var select = document.getElementById(group.genderSelectId);
+                var wrapper = getWrapper(group.genderSpecifyId);
+                if (!select || !wrapper) {
+                    return;
+                }
+                var shouldShow = isGroupVisible(group) && select.value === 'Other';
+                setWrapperVisible(wrapper, shouldShow);
+            }
+
+            function setGroupVisible(group, visible) {
+                if (!group || !group.baseIds) {
+                    return;
+                }
+                for (var i = 0; i < group.baseIds.length; i++) {
+                    if (!group.baseIds[i]) {
+                        continue;
+                    }
+                    setWrapperVisible(getWrapper(group.baseIds[i]), visible);
+                }
+                if (!visible && group.genderSpecifyId) {
+                    setWrapperVisible(getWrapper(group.genderSpecifyId), false);
+                }
+                updateGenderSpecifyVisibility(group);
+            }
+
+            function groupHasData(group) {
+                var dataIds = group.dataIds || group.baseIds || [];
+                for (var i = 0; i < dataIds.length; i++) {
+                    if (!dataIds[i]) {
+                        continue;
+                    }
+                    var field = document.getElementById(dataIds[i]);
+                    if (field && field.value && field.value.trim() !== '') {
+                        return true;
+                    }
+                }
+                if (group.genderSelectId) {
+                    var select = document.getElementById(group.genderSelectId);
+                    if (select && select.value === 'Other') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function clearGroup(group) {
+                var ids = (group.baseIds || []).slice();
+                if (group.genderSpecifyId) {
+                    ids.push(group.genderSpecifyId);
+                }
+                for (var i = 0; i < ids.length; i++) {
+                    if (!ids[i]) {
+                        continue;
+                    }
+                    var field = document.getElementById(ids[i]);
+                    if (!field) {
+                        continue;
+                    }
+                    if (field.tagName === 'SELECT') {
+                        field.selectedIndex = 0;
+                    } else {
+                        field.value = '';
+                    }
+                }
+                updateGenderSpecifyVisibility(group);
+            }
+
+            function getVisibleCount(section) {
+                var count = 0;
+                for (var i = 0; i < section.groups.length; i++) {
+                    if (isGroupVisible(section.groups[i])) {
+                        count += 1;
+                    }
+                }
+                return count;
+            }
+
+            function updateSectionButtons(section) {
+                var visibleCount = getVisibleCount(section);
+                if (section.addButton) {
+                    section.addButton.disabled = visibleCount >= section.groups.length;
+                }
+                if (section.removeButton) {
+                    section.removeButton.disabled = visibleCount <= 0;
+                }
+            }
+
+            function initSection(section) {
+                for (var i = 0; i < section.groups.length; i++) {
+                    setGroupVisible(section.groups[i], false);
+                }
+                var lastIndex = -1;
+                for (var j = 0; j < section.groups.length; j++) {
+                    if (groupHasData(section.groups[j])) {
+                        lastIndex = j;
+                    }
+                }
+                if (lastIndex >= 0) {
+                    for (var k = 0; k <= lastIndex; k++) {
+                        setGroupVisible(section.groups[k], true);
+                    }
+                }
+                updateSectionButtons(section);
+            }
+
+            function addGroup(section) {
+                for (var i = 0; i < section.groups.length; i++) {
+                    if (!isGroupVisible(section.groups[i])) {
+                        setGroupVisible(section.groups[i], true);
+                        break;
+                    }
+                }
+                updateSectionButtons(section);
+            }
+
+            function removeGroup(section) {
+                var lastVisibleIndex = -1;
+                for (var i = 0; i < section.groups.length; i++) {
+                    if (isGroupVisible(section.groups[i])) {
+                        lastVisibleIndex = i;
+                    }
+                }
+                if (lastVisibleIndex < 0) {
+                    updateSectionButtons(section);
+                    return;
+                }
+                clearGroup(section.groups[lastVisibleIndex]);
+                setGroupVisible(section.groups[lastVisibleIndex], false);
+                updateSectionButtons(section);
+            }
+
+            var sections = [
+                {
+                    key: 'children',
+                    addButton: document.querySelector('.ChildControlAdd'),
+                    removeButton: document.querySelector('.ChildControlRemove'),
+                    groups: [
+                        {
+                            baseIds: ['dc1594__1stChildfullname', 'dc1594__1stchildgenderdropdown', 'dc1594__1stchilddob', 'dc1594__1stchildlvngarrangements'],
+                            genderSelectId: 'dc1594__1stchildgenderdropdown',
+                            genderSpecifyId: 'dc1594__1stgendertextbox',
+                            dataIds: ['dc1594__1stChildfullname', 'dc1594__1stgendertextbox', 'dc1594__1stchilddob', 'dc1594__1stchildlvngarrangements']
+                        },
+                        {
+                            baseIds: ['dc1594__2ndChildfullname', 'dc1594__2ndchildgenderdropdown', 'dc1594__2ndchilddob', 'dc1594__2ndchildlvngarrangements'],
+                            genderSelectId: 'dc1594__2ndchildgenderdropdown',
+                            genderSpecifyId: 'dc1594__2ndgendertextbox',
+                            dataIds: ['dc1594__2ndChildfullname', 'dc1594__2ndgendertextbox', 'dc1594__2ndchilddob', 'dc1594__2ndchildlvngarrangements']
+                        },
+                        {
+                            baseIds: ['dc1594__3rdChildfullname', 'dc1594__3rdchildgenderdropdown', 'dc1594__3rdchilddob', 'dc1594__3rdchildlvngarrangements'],
+                            genderSelectId: 'dc1594__3rdchildgenderdropdown',
+                            genderSpecifyId: 'dc1594__3rdgendertextbox',
+                            dataIds: ['dc1594__3rdChildfullname', 'dc1594__3rdgendertextbox', 'dc1594__3rdchilddob', 'dc1594__3rdchildlvngarrangements']
+                        },
+                        {
+                            baseIds: ['dc1594__4thChildfullname', 'dc1594__4thchildgenderdropdown', 'dc1594__4thchilddob', 'dc1594__4thchildlvngarrangements'],
+                            genderSelectId: 'dc1594__4thchildgenderdropdown',
+                            genderSpecifyId: 'dc1594__4thgendertextbox',
+                            dataIds: ['dc1594__4thChildfullname', 'dc1594__4thgendertextbox', 'dc1594__4thchilddob', 'dc1594__4thchildlvngarrangements']
+                        },
+                        {
+                            baseIds: ['dc1594__5thChildfullname', 'dc1594__5thchildgenderdropdown', 'dc1594__5thchilddob', 'dc1594__5thchildlvngarrangements'],
+                            genderSelectId: 'dc1594__5thchildgenderdropdown',
+                            genderSpecifyId: 'dc1594__5thgendertextbox',
+                            dataIds: ['dc1594__5thChildfullname', 'dc1594__5thgendertextbox', 'dc1594__5thchilddob', 'dc1594__5thchildlvngarrangements']
+                        },
+                        {
+                            baseIds: ['dc1594__AdditonalChildren'],
+                            dataIds: ['dc1594__AdditonalChildren']
+                        }
+                    ]
+                },
+                {
+                    key: 'realEstate',
+                    addButton: document.querySelector('.RealEstateControlAdd'),
+                    removeButton: document.querySelector('.RealEstateControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__RE1desc', 'dc1594__Re1value', 'dc1594__Re1owner', 'dc1594__Re1financialdetails'] },
+                        { baseIds: ['dc1594__Re2desc', 'dc1594__Re2value', 'dc1594__Re2owner', 'dc1594__Re2financialdetails'] },
+                        { baseIds: ['dc1594__Re3desc', 'dc1594__Re3value', 'dc1594__Re3owner', 'dc1594__Re3financialdetails'] },
+                        { baseIds: ['dc1594__Re4desc', 'dc1594__Re4value', 'dc1594__Re4owner', 'dc1594__Re4financialdetails'] },
+                        { baseIds: ['dc1594__Re5desc', 'dc1594__Re5value', 'dc1594__Re5owner', 'dc1594__Re5financialdetails'] },
+                        { baseIds: ['dc1594__Readditional'] }
+                    ]
+                },
+                {
+                    key: 'vehicle',
+                    addButton: document.querySelector('.VehicleControlAdd'),
+                    removeButton: document.querySelector('.VehicleControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__vehicle1desc', 'dc1594__Vehicle1value', 'dc1594__Vehicle1owner', 'dc1594__Vehicle1financialdetails'] },
+                        { baseIds: ['dc1594__Vehicle2desc', 'dc1594__Vehicle2value', 'dc1594__Vehicle2owner', 'dc1594__Vehicle2financialdetails'] },
+                        { baseIds: ['dc1594__vehicle3desc', 'dc1594__Vehicle3value', 'dc1594__Vehicle3owner', 'dc1594__Vehicle3financialdetails'] },
+                        { baseIds: ['dc1594__vehicle4desc', 'dc1594__Vehicle4value', 'dc1594__Vehicle4owner', 'dc1594__Vehicle4financialdetails'] },
+                        { baseIds: ['dc1594__vehicle5desc', 'dc1594__Vehicle5value', 'dc1594__Vehicle5owner', 'dc1594__Vehicle5financialdetails'] },
+                        { baseIds: ['dc1594__vehicleadditional'] }
+                    ]
+                },
+                {
+                    key: 'bank',
+                    addButton: document.querySelector('.BankControlAdd'),
+                    removeButton: document.querySelector('.BankControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__bank1desc', 'dc1594__Bank1value', 'dc1594__Bank1owner', 'dc1594__Bank1financialdetails'] },
+                        { baseIds: ['dc1594__bank2desc', 'dc1594__Bank2value', 'dc1594__Bank2owner', 'dc1594__Bank2financialdetails'] },
+                        { baseIds: ['dc1594__Bank3desc', 'dc1594__Bank3value', 'dc1594__Bank3owner', 'dc1594__Bank3financialdetails'] },
+                        { baseIds: ['dc1594__bank4desc', 'dc1594__Bank4value', 'dc1594__Bank4owner', 'dc1594__Bank4financialdetails'] },
+                        { baseIds: ['dc1594__bank5desc', 'dc1594__Bank5value', 'dc1594__Bank5owner', 'dc1594__Bank5financialdetails'] },
+                        { baseIds: ['dc1594__Bankadditional'] }
+                    ]
+                },
+                {
+                    key: 'share',
+                    addButton: document.querySelector('.ShareControlAdd'),
+                    removeButton: document.querySelector('.ShareControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__sharedesc', 'dc1594__Sharevalue', 'dc1594__Shareowner', 'dc1594__Sharefinancialdetails'] },
+                        { baseIds: ['dc1594__share2desc', 'dc1594__Share2value', 'dc1594__Share2owner', 'dc1594__Share2financialdetails'] },
+                        { baseIds: ['dc1594__share3desc', 'dc1594__Share3value', 'dc1594__Share3owner', 'dc1594__Share3financialdetails'] },
+                        { baseIds: ['dc1594__SharesAddtional'] }
+                    ]
+                },
+                {
+                    key: 'interest',
+                    addButton: document.querySelector('.InterestControlAdd'),
+                    removeButton: document.querySelector('.InterestControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__Intrestdesc', 'dc1594__Intrestvalue', 'dc1594__Intrestowner', 'dc1594__Intrestfinancialdetails'] },
+                        { baseIds: ['dc1594__Intrest2desc', 'dc1594__Intrest2value', 'dc1594__Intrest2owner', 'dc1594__Intrest2financialdetails'] },
+                        { baseIds: ['dc1594__Intrest3desc', 'dc1594__Intrest3value', 'dc1594__Intrest3owner', 'dc1594__Intrest3financialdetails'] },
+                        { baseIds: ['dc1594__interestadditional'] }
+                    ]
+                },
+                {
+                    key: 'liability',
+                    addButton: document.querySelector('.LiabilityControlAdd'),
+                    removeButton: document.querySelector('.LiabilityControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__Liabilitiesdesc', 'dc1594__Liabilitiesvalue', 'dc1594__Liabilitiesowner', 'dc1594__Liabilitiesfinancialdetails'] },
+                        { baseIds: ['dc1594__Liabilities2desc', 'dc1594__Liabilities2value', 'dc1594__Liabilities2owner', 'dc1594__Liabilities2financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities3desc', 'dc1594__Liabilities3value', 'dc1594__Liabilities3owner', 'dc1594__Liabilities3financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities4desc', 'dc1594__Liabilities4value', 'dc1594__Liabilities4owner', 'dc1594__Liabilities4financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities5desc', 'dc1594__Liabilities5value', 'dc1594__Liabilities5owner', 'dc1594__Liabilities5financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities6desc', 'dc1594__Liabilities6value', 'dc1594__Liabilities6owner', 'dc1594__Liabilities6financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities7desc', 'dc1594__Liabilities7value', 'dc1594__Liabilities7owner', 'dc1594__Liabilities7financialdetails'] },
+                        { baseIds: ['dc1594__Liabilities8desc', 'dc1594__Liabilities8value', 'dc1594__Liabilities8owner', 'dc1594__Liabilities8financialdetails'] },
+                        { baseIds: ['dc1594__LiabilitiesAdditional'] }
+                    ]
+                },
+                {
+                    key: 'superannuation',
+                    addButton: document.querySelector('.SuperControlAdd'),
+                    removeButton: document.querySelector('.SuperControlRemove'),
+                    groups: [
+                        { baseIds: ['dc1594__Superannuationdesc', 'dc1594__Superannuationvalue', 'dc1594__Superannuationowner', 'dc1594__Superannuationfinancialdetails'] },
+                        { baseIds: ['dc1594__Superannuation2desc', 'dc1594__Superannuation2value', 'dc1594__Superannuation2owner', 'dc1594__Superannuation2financialdetails'] },
+                        { baseIds: ['dc1594__Superannuation3desc', 'dc1594__Superannuation3value', 'dc1594__Superannuation3owner', 'dc1594__Superannuation3financialdetails'] },
+                        { baseIds: ['dc1594__Superannuationadditional'] }
+                    ]
+                }
+            ];
+
+            for (var i = 0; i < sections.length; i++) {
+                (function (section) {
+                    if (section.addButton) {
+                        section.addButton.addEventListener('click', function () {
+                            addGroup(section);
+                        });
+                    }
+                    if (section.removeButton) {
+                        section.removeButton.addEventListener('click', function () {
+                            removeGroup(section);
+                        });
+                    }
+                    for (var j = 0; j < section.groups.length; j++) {
+                        (function (group) {
+                            if (!group.genderSelectId) {
+                                return;
+                            }
+                            var select = document.getElementById(group.genderSelectId);
+                            if (select) {
+                                select.addEventListener('change', function () {
+                                    updateGenderSpecifyVisibility(group);
+                                });
+                            }
+                        })(section.groups[j]);
+                    }
+                    initSection(section);
+                })(sections[i]);
+            }
+
+            function isChecked(id) {
+                var checkbox = document.getElementById(id);
+                return checkbox ? checkbox.checked : false;
+            }
+
+            function getSelectedValues(select) {
+                if (!select) {
+                    return [];
+                }
+                var values = [];
+                if (select.multiple) {
+                    for (var i = 0; i < select.options.length; i++) {
+                        if (select.options[i].selected) {
+                            values.push(select.options[i].value);
+                        }
+                    }
+                } else if (select.value) {
+                    values.push(select.value);
+                }
+                return values;
+            }
+
+            function updateHealthIssues() {
+                setWrapperVisible(getWrapper('dc1594__clienthealthissuedetails'), isChecked('dc1594__clienthealthissues'));
+            }
+
+            function updateLastWillDate() {
+                setWrapperVisible(getWrapper('dc1594__cleintdateoflastwill'), isChecked('dc1594__clienthaswill'));
+            }
+
+            function setPoaGroupVisible(ids, visible) {
+                for (var i = 0; i < ids.length; i++) {
+                    setWrapperVisible(getWrapper(ids[i]), visible);
+                }
+            }
+
+            function updatePoaDetails() {
+                var typeSelect = document.getElementById('dc1594__powerofatype');
+                var showTypes = isChecked('dc1594__clientgivenpowerofAttorney');
+                setWrapperVisible(getWrapper('dc1594__powerofatype'), showTypes);
+
+                var selected = showTypes ? getSelectedValues(typeSelect) : [];
+                var showGeneral = selected.indexOf('Gen-f') !== -1;
+                var showEnduringFinancial = selected.indexOf('End-f') !== -1;
+                var showEnduringPersonal = selected.indexOf('End-ph') !== -1;
+
+                setPoaGroupVisible(['dc1594__Generaldatepowerofa', 'dc1594__generalpowerofanames', 'dc1594__genpowerofarevoke'], showGeneral);
+                setPoaGroupVisible(['dc1594__Enduringdatepowerofa', 'dc1594__endpowrofanames', 'dc1594__endpowerofarevoke'], showEnduringFinancial);
+                setPoaGroupVisible(['dc1594__endphdatepowerofa', 'dc1594__endphpowerofanames', 'dc1594__endphpowerofarevoke'], showEnduringPersonal);
+            }
+
+            var healthIssuesCheckbox = document.getElementById('dc1594__clienthealthissues');
+            if (healthIssuesCheckbox) {
+                healthIssuesCheckbox.addEventListener('change', updateHealthIssues);
+            }
+
+            var lastWillCheckbox = document.getElementById('dc1594__clienthaswill');
+            if (lastWillCheckbox) {
+                lastWillCheckbox.addEventListener('change', updateLastWillDate);
+            }
+
+            var poaCheckbox = document.getElementById('dc1594__clientgivenpowerofAttorney');
+            if (poaCheckbox) {
+                poaCheckbox.addEventListener('change', updatePoaDetails);
+            }
+
+            var poaSelect = document.getElementById('dc1594__powerofatype');
+            if (poaSelect) {
+                poaSelect.addEventListener('change', updatePoaDetails);
+            }
+
+            // Multi-dropdown functionality for Power of Attorney
+            function makeMultiDropdown(prefix, values) {
+                var select = document.getElementById(prefix);
+                var box = document.getElementById(prefix + 'SelectBox');
+                var text = document.getElementById(prefix + 'BoxText');
+                var list = document.getElementById(prefix + 'Checkboxes');
+
+                if (!select || !box || !text || !list) {
+                    return;
+                }
+
+                function setExpanded(isOpen) {
+                    box.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                }
+
+                function toggleList() {
+                    var isOpen = list.style.display === 'block';
+                    list.style.display = isOpen ? 'none' : 'block';
+                    setExpanded(!isOpen);
+                }
+
+                box.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    toggleList();
+                });
+
+                box.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleList();
+                    }
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!box.contains(e.target) && !list.contains(e.target)) {
+                        list.style.display = 'none';
+                        setExpanded(false);
+                    }
+                });
+
+                function updateLabel() {
+                    var chosen = [];
+                    for (var i = 0; i < select.options.length; i++) {
+                        if (select.options[i].selected) {
+                            chosen.push(select.options[i].text);
+                        }
+                    }
+                    text.textContent = chosen.length ? chosen.join(', ') : '(Please Select)';
+                }
+
+                function syncCheckboxes() {
+                    for (var i = 0; i < values.length; i++) {
+                        var val = values[i];
+                        var cb = list.querySelector('input[value="' + val + '"]');
+                        var opt = select.querySelector('option[value="' + val + '"]');
+                        if (!cb || !opt) {
+                            continue;
+                        }
+                        cb.checked = opt.selected;
+                    }
+                    updateLabel();
+                }
+
+                function notifySelectChange() {
+                    if (typeof Event === 'function') {
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        return;
+                    }
+                    if (document.createEvent) {
+                        var ev = document.createEvent('HTMLEvents');
+                        ev.initEvent('change', true, false);
+                        select.dispatchEvent(ev);
+                    }
+                }
+
+                for (var i = 0; i < values.length; i++) {
+                    (function (val) {
+                        var cb = list.querySelector('input[value="' + val + '"]');
+                        var opt = select.querySelector('option[value="' + val + '"]');
+                        if (!cb || !opt) {
+                            return;
+                        }
+                        cb.addEventListener('change', function () {
+                            opt.selected = cb.checked;
+                            updateLabel();
+                            notifySelectChange();
+                        });
+                    })(values[i]);
+                }
+
+                select.addEventListener('change', syncCheckboxes);
+
+                syncCheckboxes();
+            }
+
+            // Initialize multi-dropdown for Power of Attorney
+            makeMultiDropdown('dc1594__powerofatype', ['Gen-f', 'End-f', 'End-ph']);
+
+            updateHealthIssues();
+            updateLastWillDate();
+            updatePoaDetails();
+        });
+    </script>
+</div>

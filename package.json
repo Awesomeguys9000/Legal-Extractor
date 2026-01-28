@@ -1,0 +1,45 @@
+{
+    "name": "legal-doc-verifier",
+    "version": "1.0.0",
+    "description": "Legal Document Verifier - AI-powered contract analysis",
+    "main": "electron/main.js",
+    "scripts": {
+        "start": "electron .",
+        "build-python": "pyinstaller --noconfirm --onedir --console --add-data \"legal_extraction.py;.\" --add-data \"highlight_evidence_pure.py;.\" --name streamlit_backend app.py",
+        "build": "electron-builder"
+    },
+    "author": "Legal Doc Verifier",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^28.0.0",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.legaldocverifier.app",
+        "productName": "Legal Doc Verifier",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "electron/**/*",
+            "dist/streamlit_backend/**/*"
+        ],
+        "extraResources": [
+            {
+                "from": "dist/streamlit_backend",
+                "to": "streamlit_backend",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ],
+        "win": {
+            "target": "nsis",
+            "icon": "icon.ico"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        }
+    }
+}
