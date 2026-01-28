@@ -383,8 +383,23 @@ with col2:
             else:
                 pdf_src = f"data:application/pdf;base64,{pdf_base64}"
                 
-            pdf_display = f'<iframe id="pdf_frame_{nav_id}" src="{pdf_src}" width="100%" height="900px" style="border: 1px solid #ccc;"></iframe>'
+            pdf_display = f'''
+                <embed
+                    src="{pdf_src}"
+                    type="application/pdf"
+                    width="100%"
+                    height="900px"
+                />
+            '''
             st.markdown(pdf_display, unsafe_allow_html=True)
+            
+            # Fallback download button (incase embed fails)
+            st.download_button(
+                label="📥 Download PDF Page",
+                data=base64.b64decode(pdf_base64),
+                file_name=f"view_page_{current_page}.pdf",
+                mime="application/pdf"
+            )
         else:
              st.error("Could not load PDF file.")
         
