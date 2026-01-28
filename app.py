@@ -2,13 +2,9 @@ import streamlit as st
 import os
 import json
 import tempfile
-import threading
-import http.server
-import socketserver
 import time
 import base64
 from pathlib import Path
-from functools import partial
 import shutil
 import streamlit.components.v1 as components
 
@@ -32,31 +28,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- Local File Server Setup ---
-PORT = 8080
-PDF_DIR = os.path.join(os.getcwd(), "temp_pdfs") 
+# --- PDF Display Helper ---
+def get_pdf_base64(file_path):
+    """Reads a PDF file and returns a base64 encoded string."""
+    try:
+        with open(file_path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode('utf-8')
+    except Exception as e:
+        print(f"Error reading PDF {file_path}: {e}")
+        return None
 
+PDF_DIR = os.path.join(os.getcwd(), "temp_pdfs") 
 if not os.path.exists(PDF_DIR):
     os.makedirs(PDF_DIR)
-
-def start_server():
-    """Starts a simple HTTP server in a daemon thread serving PDF_DIR."""
-    Handler = partial(http.server.SimpleHTTPRequestHandler, directory=PDF_DIR)
-    
-    while True:
-        try:
-            with socketserver.TCPServer(("", PORT), Handler) as httpd:
-                print(f"Serving PDFs from {PDF_DIR} at http://localhost:{PORT}")
-                httpd.serve_forever()
-        except OSError:
-            # print("Port busy...")
-            time.sleep(1)
-
-# Start server once
-if 'server_started' not in st.session_state:
-    t = threading.Thread(target=start_server, daemon=True)
-    t.start()
-    st.session_state.server_started = True
 
 # --- Session State ---
 if 'current_page' not in st.session_state:
@@ -369,23 +354,39 @@ with col2:
                         st.rerun()
         
         # --- SINGLE PAGE OR FULL PDF LOADING ---
+        target_path = None
+        pdf_base64 = None
+        
         if page_base_name and not view_whole:
             # Load the specific page file (single-page PDF)
-            page_filename = f"{page_base_name}_{current_page}.pdf"
-            pdf_url = f"http://localhost:{PORT}/{page_filename}"
+            target_path = os.path.join(PDF_DIR, f"{page_base_name}_{current_page}.pdf")
             st.info(f"Viewing Page {current_page} of {total_pages}")
         elif st.session_state.get('highlighted_filename'):
             # Load full highlighted PDF
-            pdf_url = f"http://localhost:{PORT}/{st.session_state.highlighted_filename}#page={current_page}"
+            target_path = os.path.join(PDF_DIR, st.session_state.highlighted_filename)
             st.info(f"Viewing Full PDF (Page {current_page})")
         else:
             # Fallback: Load preview before analysis
-            pdf_url = f"http://localhost:{PORT}/{target_filename}"
+            target_path = os.path.join(PDF_DIR, target_filename)
             st.info(f"Preview: {target_filename}")
         
-        # iframe
-        pdf_display = f'<iframe id="pdf_frame_{nav_id}" src="{pdf_url}" width="100%" height="900px" style="border: 1px solid #ccc;"></iframe>'
-        st.markdown(pdf_display, unsafe_allow_html=True)
+        if target_path and os.path.exists(target_path):
+            pdf_base64 = get_pdf_base64(target_path)
+            
+        if pdf_base64:
+            # Standard PDF embedding via base64
+            # Note: #page=N works in some browsers for data URIs but not all
+            # But single-page view doesn't need it!
+            if view_whole:
+                # Add page hash for whole PDF view (best effort)
+                pdf_src = f"data:application/pdf;base64,{pdf_base64}#page={current_page}"
+            else:
+                pdf_src = f"data:application/pdf;base64,{pdf_base64}"
+                
+            pdf_display = f'<iframe id="pdf_frame_{nav_id}" src="{pdf_src}" width="100%" height="900px" style="border: 1px solid #ccc;"></iframe>'
+            st.markdown(pdf_display, unsafe_allow_html=True)
+        else:
+             st.error("Could not load PDF file.")
         
     else:
         st.title("Welcome to Legal Verifier")
