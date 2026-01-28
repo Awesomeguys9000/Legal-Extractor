@@ -371,35 +371,45 @@ with col2:
             st.info(f"Preview: {target_filename}")
         
         if target_path and os.path.exists(target_path):
-            pdf_base64 = get_pdf_base64(target_path)
-            
-        if pdf_base64:
-            # Standard PDF embedding via base64
-            # Note: #page=N works in some browsers for data URIs but not all
-            # But single-page view doesn't need it!
-            if view_whole:
-                # Add page hash for whole PDF view (best effort)
-                pdf_src = f"data:application/pdf;base64,{pdf_base64}#page={current_page}"
-            else:
-                pdf_src = f"data:application/pdf;base64,{pdf_base64}"
+            try:
+                import fitz  # PyMuPDF
                 
-            pdf_display = f'''
-                <embed
-                    src="{pdf_src}"
-                    type="application/pdf"
-                    width="100%"
-                    height="900px"
-                />
-            '''
-            st.markdown(pdf_display, unsafe_allow_html=True)
-            
-            # Fallback download button (incase embed fails)
-            st.download_button(
-                label="📥 Download PDF Page",
-                data=base64.b64decode(pdf_base64),
-                file_name=f"view_page_{current_page}.pdf",
-                mime="application/pdf"
-            )
+                # Determine which page index to render
+                # If viewing whole PDF (highlighted), we need specific page index
+                # If viewing single page file, it only has 1 page (index 0)
+                render_page_idx = 0
+                if view_whole and st.session_state.get('highlighted_filename'):
+                     # Page numbers are 1-based in UI, 0-based in fitz
+                     render_page_idx = current_page - 1
+                
+                doc = fitz.open(target_path)
+                if 0 <= render_page_idx < len(doc):
+                    page = doc.load_page(render_page_idx)
+                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # 2x zoom for quality
+                    img_bytes = pix.tobytes("png")
+                    
+                    # Display Image
+                    st.image(img_bytes, use_container_width=True, caption=f"Page {current_page}")
+                else:
+                    st.error(f"Page {current_page} not found in document.")
+                    
+                doc.close()
+                
+                # Keep download button as backup
+                with open(target_path, "rb") as f:
+                    pdf_bytes = f.read()
+                    
+                st.download_button(
+                    label="📥 Download PDF",
+                    data=pdf_bytes,
+                    file_name=f"document_page_{current_page}.pdf",
+                    mime="application/pdf"
+                )
+                
+            except ImportError:
+                st.error("PyMuPDF (fitz) not installed. Please add 'pymupdf' to requirements.txt")
+            except Exception as e:
+                st.error(f"Error rendering PDF: {e}")
         else:
              st.error("Could not load PDF file.")
         
