@@ -50,14 +50,17 @@ def check_password():
     st.title("🔐 Legal Doc Verifier")
     st.markdown("This app is password protected.")
     
-    password = st.text_input("Enter Password", type="password", key="password_input")
-    
-    if st.button("Login", type="primary"):
-        if password == app_password:
-            st.session_state.authenticated = True
-            st.rerun()
-        else:
-            st.error("Incorrect password")
+    # Use form so Enter key submits
+    with st.form("login_form"):
+        password = st.text_input("Enter Password", type="password", key="password_input")
+        submitted = st.form_submit_button("Login", type="primary")
+        
+        if submitted:
+            if password == app_password:
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("Incorrect password")
     
     return False
 
