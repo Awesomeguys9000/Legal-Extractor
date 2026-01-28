@@ -129,26 +129,40 @@ def save_api_key(key):
     except Exception as e:
         st.warning(f"Could not save API key: {e}")
 
-# Load saved key on first run
+# Check for API key in Streamlit secrets first
+secrets_api_key = None
+try:
+    secrets_api_key = st.secrets.get("GEMINI_API_KEY")
+except:
+    pass
+
+# Load saved key on first run (secrets take priority)
 if "api_key" not in st.session_state:
-    st.session_state.api_key = load_saved_api_key()
+    if secrets_api_key:
+        st.session_state.api_key = secrets_api_key
+    else:
+        st.session_state.api_key = load_saved_api_key()
 
-# API Key Input
-st.sidebar.subheader("🔑 API Configuration")
-api_key = st.sidebar.text_input(
-    "Gemini API Key",
-    type="password",
-    value=st.session_state.get("api_key", ""),
-    help="Enter your Google Gemini API key. It will be saved for next time."
-)
+# Only show API Key input if NOT configured via secrets
+if not secrets_api_key:
+    st.sidebar.subheader("🔑 API Configuration")
+    api_key = st.sidebar.text_input(
+        "Gemini API Key",
+        type="password",
+        value=st.session_state.get("api_key", ""),
+        help="Enter your Google Gemini API key. It will be saved for next time."
+    )
+    
+    # Save if changed
+    if api_key and api_key != st.session_state.get("api_key", ""):
+        st.session_state.api_key = api_key
+        save_api_key(api_key)
+        st.sidebar.success("✅ API key saved!")
+    
+    st.sidebar.divider()
 
-# Save if changed
-if api_key and api_key != st.session_state.get("api_key", ""):
-    st.session_state.api_key = api_key
-    save_api_key(api_key)
-    st.sidebar.success("✅ API key saved!")
+# If secrets_api_key is set, no API section is shown at all
 
-st.sidebar.divider()
 
 uploaded_file = st.sidebar.file_uploader("Upload Contract (PDF)", type=["pdf"])
 
