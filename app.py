@@ -28,6 +28,42 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Password Protection ---
+# Set APP_PASSWORD in Streamlit Secrets to enable protection
+# If not set, password protection is disabled (for local dev)
+def check_password():
+    """Returns True if authenticated, False otherwise."""
+    app_password = None
+    try:
+        app_password = st.secrets.get("APP_PASSWORD")
+    except:
+        pass
+    
+    # If no password is configured, allow access (for local dev)
+    if not app_password:
+        return True
+    
+    if st.session_state.get("authenticated"):
+        return True
+    
+    # Show login form
+    st.title("🔐 Legal Doc Verifier")
+    st.markdown("This app is password protected.")
+    
+    password = st.text_input("Enter Password", type="password", key="password_input")
+    
+    if st.button("Login", type="primary"):
+        if password == app_password:
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("Incorrect password")
+    
+    return False
+
+if not check_password():
+    st.stop()
+
 # --- PDF Display Helper ---
 def get_pdf_base64(file_path):
     """Reads a PDF file and returns a base64 encoded string."""
