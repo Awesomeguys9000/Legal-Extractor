@@ -35,64 +35,60 @@ def extract_legal_data(pdf_path, model_name="gemini-3-flash-preview", api_key=No
     client = genai.Client(api_key=api_key)
 
     print(f"Uploading file: {pdf_path}...")
-    try:
-        # Upload the file
-        file_upload = client.files.upload(file=pdf_path)
-        print(f"Uploaded file: {file_upload.name}")
+    print(f"Uploading file: {pdf_path}...")
+    # Upload the file
+    file_upload = client.files.upload(file=pdf_path)
+    print(f"Uploaded file: {file_upload.name}")
 
-        # Wait for the file to be processed
-        print("Waiting for file processing...")
-        while file_upload.state.name == "PROCESSING":
-            print(".", end="", flush=True)
-            time.sleep(2)
-            file_upload = client.files.get(name=file_upload.name)
-        print()
+    # Wait for the file to be processed
+    print("Waiting for file processing...")
+    while file_upload.state.name == "PROCESSING":
+        print(".", end="", flush=True)
+        time.sleep(2)
+        file_upload = client.files.get(name=file_upload.name)
+    print()
 
-        if file_upload.state.name != "ACTIVE":
-            raise RuntimeError(f"File processing failed. State: {file_upload.state.name}")
+    if file_upload.state.name != "ACTIVE":
+        raise RuntimeError(f"File processing failed. State: {file_upload.state.name}")
 
-        print("File is ACTIVE. Generating content...")
+    print("File is ACTIVE. Generating content...")
 
-        prompt = """
-        You are a legal AI assistant. Extract each of the key dates in the provided file.
-        Common fields include: Contract Date, Settlement Date, Finance Date, etc.
-        
-        3. **Date Calculation**:
-           - If a date is relative (e.g., "3 days after Contract Date"), and the referenced date is available in the document, YOU MUST CALCULATE the actual date (DD-MM-YYYY) and return it as the "value".
-           - If calculation is impossible (e.g., referenced date missing), return the relative description as the "value".
-        
-        Return a single JSON object where:
-        - The keys are the descriptive names of the fields (e.g., "Contract Date").
-        - The values are objects with THREE keys: 
-            1. "value": The extracted date formatted as DD-MM-YYYY. If the date is relative, return the relative description. If null/not found, return null.
-            2. "verbatim_quote": The exact substring from the text. Return null if not applicable.
-            3. "page_number": The integer page number where this information is found. **You must provide a page number estimate even if the value is null or handwritten.**
-        """
+    prompt = """
+    You are a legal AI assistant. Extract each of the key dates in the provided file.
+    Common fields include: Contract Date, Settlement Date, Finance Date, etc.
+    
+    3. **Date Calculation**:
+       - If a date is relative (e.g., "3 days after Contract Date"), and the referenced date is available in the document, YOU MUST CALCULATE the actual date (DD-MM-YYYY) and return it as the "value".
+       - If calculation is impossible (e.g., referenced date missing), return the relative description as the "value".
+    
+    Return a single JSON object where:
+    - The keys are the descriptive names of the fields (e.g., "Contract Date").
+    - The values are objects with THREE keys: 
+        1. "value": The extracted date formatted as DD-MM-YYYY. If the date is relative, return the relative description. If null/not found, return null.
+        2. "verbatim_quote": The exact substring from the text. Return null if not applicable.
+        3. "page_number": The integer page number where this information is found. **You must provide a page number estimate even if the value is null or handwritten.**
+    """
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=[
-                types.Content(
-                    role="user",
-                    parts=[
-                        types.Part.from_uri(
-                            file_uri=file_upload.uri,
-                            mime_type=file_upload.mime_type,
-                        ),
-                        types.Part.from_text(text=prompt),
-                    ],
-                )
-            ],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-            ),
-        )
+    response = client.models.generate_content(
+        model=model_name,
+        contents=[
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_uri(
+                        file_uri=file_upload.uri,
+                        mime_type=file_upload.mime_type,
+                    ),
+                    types.Part.from_text(text=prompt),
+                ],
+            )
+        ],
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+        ),
+    )
 
-        return response.text
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+    return response.text
     
 def list_models():
     api_key = os.environ.get("GEMINI_API_KEY")
