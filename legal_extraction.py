@@ -17,6 +17,16 @@ def extract_legal_data(pdf_path, model_name="gemini-3-flash-preview", api_key=No
     Returns:
         JSON string containing the extracted data.
     """
+    # Try multiple sources for API key:
+    # 1. Passed parameter (from app.py input field)
+    # 2. Streamlit secrets (for Streamlit Cloud hosting)
+    # 3. Environment variable (for local dev)
+    if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("GEMINI_API_KEY")
+        except:
+            pass
     if not api_key:
         api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
