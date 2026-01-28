@@ -374,25 +374,37 @@ with col2:
             try:
                 import fitz  # PyMuPDF
                 
-                # Determine which page index to render
-                # If viewing whole PDF (highlighted or preview), we need specific page index
-                # If viewing single page file, it only has 1 page (index 0)
-                render_page_idx = 0
-                if view_whole:
-                     # Page numbers are 1-based in UI, 0-based in fitz
-                     render_page_idx = max(0, current_page - 1)
-                
                 doc = fitz.open(target_path)
-                if 0 <= render_page_idx < len(doc):
-                    page = doc.load_page(render_page_idx)
-                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # 2x zoom for quality
-                    img_bytes = pix.tobytes("png")
-                    
-                    # Display Image
-                    st.image(img_bytes, use_container_width=True, caption=f"Page {current_page}")
+                
+                if view_whole:
+                    # Render ALL pages in the document
+                    # Note: If target_path is the highlighted file, it has all pages.
+                    for i, page in enumerate(doc):
+                        # Create an anchor for scrolling? Streamlit native anchors might be hard to jump to automatically
+                        # But we can at least label them
+                        st.markdown(f"### Page {i+1}")
+                        
+                        # Render high-res
+                        pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5)) # 1.5x zoom
+                        img_bytes = pix.tobytes("png")
+                        st.image(img_bytes, use_container_width=True)
+                        st.divider()
                 else:
-                    st.error(f"Page {current_page} not found in document.")
+                    # Single page mode - render just the first page of this split file
+                    # (Or the specific page if target_path was somehow the full file)
+                    p_idx = 0
+                    if len(doc) > 1:
+                         # Fallback safety: if we somehow loaded a multi-page doc in single mode
+                         p_idx = max(0, current_page - 1)
                     
+                    if p_idx < len(doc):
+                        page = doc.load_page(p_idx)
+                        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) 
+                        img_bytes = pix.tobytes("png")
+                        st.image(img_bytes, use_container_width=True, caption=f"Page {current_page}")
+                    else:
+                        st.error("Page not found.")
+
                 doc.close()
                 
                 # Keep download button as backup
@@ -402,7 +414,7 @@ with col2:
                 st.download_button(
                     label="📥 Download PDF",
                     data=pdf_bytes,
-                    file_name=f"document_page_{current_page}.pdf",
+                    file_name=f"document.pdf",
                     mime="application/pdf"
                 )
                 
