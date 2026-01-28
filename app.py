@@ -375,12 +375,12 @@ with col2:
                 import fitz  # PyMuPDF
                 
                 # Determine which page index to render
-                # If viewing whole PDF (highlighted), we need specific page index
+                # If viewing whole PDF (highlighted or preview), we need specific page index
                 # If viewing single page file, it only has 1 page (index 0)
                 render_page_idx = 0
-                if view_whole and st.session_state.get('highlighted_filename'):
+                if view_whole:
                      # Page numbers are 1-based in UI, 0-based in fitz
-                     render_page_idx = current_page - 1
+                     render_page_idx = max(0, current_page - 1)
                 
                 doc = fitz.open(target_path)
                 if 0 <= render_page_idx < len(doc):
